@@ -1,0 +1,30 @@
+[submodule "Thirdparty/MicroCore"]
+	path = Thirdparty/MicroCore
+	url = https://github.com/atlanticity91/MicroCore.git
+[submodule "Thirdparty/MicroOpenGL"]
+	path = Thirdparty/MicroOpenGL
+	url = https://github.com/atlanticity91/MicroOpenGL.git
+[submodule "Thirdparty/MicroVulkan"]
+	path = Thirdparty/MicroVulkan
+	url = https://github.com/atlanticity91/MicroVulkan.git
+[submodule "Thirdparty/Sdl"]
+	path = Thirdparty/Sdl
+	url = https://github.com/libsdl-org/SDL.git
+[submodule "Thirdparty/SdlMixer"]
+	path = Thirdparty/SdlMixer
+	url = https://github.com/libsdl-org/SDL_mixer.git
+[submodule "Thirdparty/Imgui"]
+	path = Thirdparty/Imgui
+	url = https://github.com/ocornut/imgui.git
+[submodule "Thirdparty/Lz4"]
+	path = Thirdparty/Lz4
+	url = https://github.com/lz4/lz4.git
+[submodule "Thirdparty/Thorvg"]
+	path = Thirdparty/Thorvg
+	url = https://github.com/thorvg/thorvg.git
+[submodule "Thirdparty/Freetype"]
+	path = Thirdparty/Freetype
+	url = https://github.com/freetype/freetype.git
+[submodule "Thirdparty/Msdf"]
+	path = Thirdparty/Msdf
+	url = https://github.com/Chlumsky/msdf-atlas-gen.git
