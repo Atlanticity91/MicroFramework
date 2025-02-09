@@ -43,7 +43,7 @@ workspace "Micro Solution"
     --- MICRO OPENGL PROJECTS
     group "Thirdparty/MicroOpenGL"
         include "../Thirdparty/MicroOpenGL/Thirdparty/GLW/Build/Thirdparty/Build-GLEW.lua"
-        include "../Thirdparty/MicroOpenGL/Thirdparty/GLW/Build/Thirdparty/Build-GLM.lua"
+        include "../Thirdparty/MicroOpenGL/Thirdparty/GLW/Build/Build-GLW.lua"
     --- MICRO VULKAN PROJECTS
     group "Thirdparty/MicroVulkan"
         include "../Thirdparty/MicroVulkan/Build/Thirdparty/Build-Header-Shaderc.lua"

@@ -38,7 +38,7 @@ IncludeDirs[ 'Yaml' ] = '%{wks.location}/Thirdparty/MicroCore/Thirdparty/yaml-cp
 --- MICRO OPENGL PROJECTS
 IncludeDirs[ 'MicroOpenGL'] = '%{wks.location}/Thirdparty/MicroOpenGL/MicroOpenGL/'
 IncludeDirs[ 'Glew'] = '%{wks.location}/Thirdparty/MicroOpenGL/Thirdparty/GLW/Thirdparty/GLEW/'
-IncludeDirs[ 'Glw'] = '%{wks.location}/Thirdparty/MicroOpenGL/Thirdparty/GLW/GLW/'
+IncludeDirs[ 'Glw'] = '%{wks.location}/Thirdparty/MicroOpenGL/Thirdparty/GLW/'
 
 --- MICRO VULKAN PROJECTS
 IncludeDirs[ 'MicroVulkan'] = '%{wks.location}/Thirdparty/MicroVulkan/MicroVulkan/'
