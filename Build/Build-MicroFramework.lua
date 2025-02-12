@@ -11,22 +11,23 @@ project "MicroFramework"
 
 	--- GLOBAL INCLUDES
 	includedirs {
-		"%{IncludeDirs.MicroFramework}",
 		"%{IncludeDirs.MicroCore}",
+		"%{IncludeDirs.MicroFramework}",
 		"%{IncludeDirs.Glm}",
 		"%{IncludeDirs.Libclang}",
-		"%{IncludeDirs.Spdlog}",
-		"%{IncludeDirs.Yaml}",
+		"%{IncludeDirs.Spdlog}include/",
+		"%{IncludeDirs.Yaml}include/",
 		"%{IncludeDirs.MicroOpenGL}",
-		"%{IncludeDirs.Glew}",
+		"%{IncludeDirs.Glew}include/",
 		"%{IncludeDirs.Glw}",
 		"%{IncludeDirs.MicroVulkan}",
 		"%{IncludeDirs.Vulkan}",
-		"%{IncludeDirs.Freetype}",
+		"%{IncludeDirs.Freetype}include/",
 		"%{IncludeDirs.Imgui}",
 		"%{IncludeDirs.Lz4}",
 		"%{IncludeDirs.Msdf}",
-		"%{IncludeDirs.MsdfAtlas}",
+		"%{IncludeDirs.Msdf}msdfgen/",
+		"%{IncludeDirs.Msdf}msdf-atlas-gen/",
 		"%{IncludeDirs.Nvidia}",
 		"%{IncludeDirs.Sdl}include/",
 		"%{IncludeDirs.SdlMixer}include/",
@@ -34,22 +35,23 @@ project "MicroFramework"
 	}
 	
 	externalincludedirs {
-		"%{IncludeDirs.MicroFramework}",
 		"%{IncludeDirs.MicroCore}",
+		"%{IncludeDirs.MicroFramework}",
 		"%{IncludeDirs.Glm}",
 		"%{IncludeDirs.Libclang}",
-		"%{IncludeDirs.Spdlog}",
-		"%{IncludeDirs.Yaml}",
+		"%{IncludeDirs.Spdlog}include/",
+		"%{IncludeDirs.Yaml}include/",
 		"%{IncludeDirs.MicroOpenGL}",
-		"%{IncludeDirs.Glew}",
+		"%{IncludeDirs.Glew}include/",
 		"%{IncludeDirs.Glw}",
 		"%{IncludeDirs.MicroVulkan}",
 		"%{IncludeDirs.Vulkan}",
-		"%{IncludeDirs.Freetype}",
+		"%{IncludeDirs.Freetype}include/",
 		"%{IncludeDirs.Imgui}",
 		"%{IncludeDirs.Lz4}",
 		"%{IncludeDirs.Msdf}",
-		"%{IncludeDirs.MsdfAtlas}",
+		"%{IncludeDirs.Msdf}msdfgen/",
+		"%{IncludeDirs.Msdf}msdf-atlas-gen/",
 		"%{IncludeDirs.Nvidia}",
 		"%{IncludeDirs.Sdl}include/",
 		"%{IncludeDirs.SdlMixer}include/",
@@ -70,24 +72,20 @@ project "MicroFramework"
 
 	--- GLOBAL SOURCE FILES
 	files { 
-		"%{IncludeDirs.MicroFramework}/**.h", 
-		"%{IncludeDirs.MicroFramework}/**.cpp" 
+		"%{IncludeDirs.MicroFramework}**.h", 
+		"%{IncludeDirs.MicroFramework}**.cpp" 
 	}
 
 	--- GLOBAL LINK
 	links {
-		"Freetype",
-		"Imgui",
-		"Lz4",
-		"Msdf",
-		"MsdfAtlas",
-		"SDL",
-		"SDL_Mixer",
-		"Thorvg",
-		"Nsight",
 		"MicroCore",
 		"MicroOpenGL",
 		"MicroVulkan",
+		"Nsight",
+		"SDL_Mixer",
+		"Imgui",
+		"Lz4",
+		"MsdfAtlas",
 		"Thorvg"
 	}
 
@@ -111,7 +109,7 @@ project "MicroFramework"
 		}
 
 		-- PRECOMPILED SOURCE
-		pchsource "%{IncludeDirs.MicroFramework}__micro_framework_pch.cpp"
+		pchsource "../MicroFramework/__micro_framework_pch.cpp"
 
 	--- CONFIGURATION
 	filter "configurations:Debug"

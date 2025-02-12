@@ -9,15 +9,16 @@ project "Msdf"
 	debugdir "%{OutputDirs.Bin}%{cfg.buildcfg}/"
 	objdir "%{OutputDirs.BinInt}%{prj.name}-%{cfg.buildcfg}"
 
-	--- GLOBAL DEFINES
-	defines {
-		"MSDFGEN_BUILD_STANDALONE"
+	--- GLOBAL INCLUDES
+	includedirs { 
+		"%{IncludeDirs.Freetype}include/",
+		"%{IncludeDirs.Msdf}" 
 	}
 
-	--- GLOBAL INCLUDES
-	includedirs { "%{IncludeDirs.Msdf}" }
-
-	externalincludedirs { "%{IncludeDirs.Msdf}" }
+	externalincludedirs { 
+		"%{IncludeDirs.Freetype}include/",
+		"%{IncludeDirs.Msdf}" 
+	}
 
 	--- GLOBAL SOURCE FILES
 	files {
@@ -25,10 +26,19 @@ project "Msdf"
 		"%{IncludeDirs.Msdf}msdfgen/core/**.hpp",
 		"%{IncludeDirs.Msdf}msdfgen/core/**.cpp",
 		"%{IncludeDirs.Msdf}msdfgen/ext/**.h",
+		"%{IncludeDirs.Msdf}msdfgen/ext/**.hpp",
 		"%{IncludeDirs.Msdf}msdfgen/ext/**.cpp",
 		"%{IncludeDirs.Msdf}msdfgen/msdfgen.h",
 		"%{IncludeDirs.Msdf}msdfgen/msdfgen-ext.h",
 		"%{IncludeDirs.Msdf}msdfgen/resource.h"
+	}
+
+	--- GLOBAL LINKS
+	links { "Freetype" }
+
+	prebuildmessage "Copy Msdf configuration file"
+	prebuildcommands {
+		"{COPYFILE} %{wks.location}/Thirdparty/Configs/msdfgen-config.h %{IncludeDirs.Msdf}msdfgen/"
 	}
 
 	--- LINUX
@@ -45,9 +55,12 @@ project "Msdf"
 		flags "MultiProcessorCompile"
 
 		--- WINDOWS SPECIFIC DEFINES
-		defines { "WINDOWS" }
+		defines { 
+			"WINDOWS",
+			"_CRT_SECURE_NO_WARNINGS"
+		}
 
-		files { "%{IncludeDirs.Msdf}msdfgen/msdfgen.rc" }
+		-- files { "%{IncludeDirs.Msdf}msdfgen/msdfgen.rc" }
 
 	--- CONFIGURATION
 	filter "configurations:Debug"

@@ -86,6 +86,7 @@ project "Freetype"
 			"WINDOWS", 
 			"_LIB",
 			"_CRT_SECURE_NO_WARNINGS",
+			"_CRT_NONSTDC_NO_WARNINGS",
             "DLL_EXPORT"
 		}
 

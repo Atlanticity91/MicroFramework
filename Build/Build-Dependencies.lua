@@ -45,16 +45,15 @@ IncludeDirs[ 'MicroVulkan'] = '%{wks.location}/Thirdparty/MicroVulkan/MicroVulka
 IncludeDirs[ 'Vulkan' ] = ( vulkan..'/'.._OPTIONS[ 'vk_version' ]..'/Include/' )
 
 --- THIRDPARTY PROJECTS
-IncludeDirs[ 'Nvidia' ] = '%{wks.location}Thirdparty/nvidia/'
-IncludeDirs[ 'Amd' ] = '%{wks.location}Thirdparty/amd/'
-IncludeDirs[ 'Freetype' ] = '%{wks.location}/Thirdparty/freetype/'
-IncludeDirs[ 'Msdf' ] = '%{wks.location}/Thirdparty/msdf/'
-IncludeDirs[ 'MsdfAtlas' ] = '%{wks.location}/Thirdparty/msdf-atlas/'
-IncludeDirs[ 'Sdl' ] = '%{wks.location}/Thirdparty/SDL/'
-IncludeDirs[ 'SdlMixer' ] = '%{wks.location}/Thirdparty/SDL_Mixer/'
-IncludeDirs[ 'Thorvg' ] = '%{wks.location}/Thirdparty/thorvg/'
-IncludeDirs[ 'Imgui' ] = '%{wks.location}/Thirdparty/imgui/'
-IncludeDirs[ 'Lz4' ] = '%{wks.location}/Thirdparty/lz4/'
+IncludeDirs[ 'Nvidia' ] = '%{wks.location}Thirdparty/Nvidia/'
+IncludeDirs[ 'Amd' ] = '%{wks.location}Thirdparty/Amd/'
+IncludeDirs[ 'Freetype' ] = '%{wks.location}/Thirdparty/Freetype/'
+IncludeDirs[ 'Msdf' ] = '%{wks.location}/Thirdparty/Msdf/'
+IncludeDirs[ 'Sdl' ] = '%{wks.location}/Thirdparty/Sdl/'
+IncludeDirs[ 'SdlMixer' ] = '%{wks.location}/Thirdparty/SdlMixer/'
+IncludeDirs[ 'Thorvg' ] = '%{wks.location}/Thirdparty/Thorvg/'
+IncludeDirs[ 'Imgui' ] = '%{wks.location}/Thirdparty/Imgui/'
+IncludeDirs[ 'Lz4' ] = '%{wks.location}/Thirdparty/Lz4/'
 
 if render_doc ~= nil then
 	IncludeDirs[ 'RenderDoc' ] = ( render_doc..'/'  )

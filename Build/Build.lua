@@ -5,17 +5,54 @@ include "Build-Dependencies.lua"
 
 --- PROJECT CONFIGURATION
 workspace "Micro Solution"
-    architecture "x64"
     startproject "MicroFramework"
+    defaultplatform "x64_nvidia"
     location "../"
     configurations { 
         "Debug", 
         "Release", 
         "Dist" 
     }
+    platforms {
+        "x64_nvidia",
+        "x64_amd"
+    }
 
     --- GLOBAL DEFINES
-    defines { "IMGUI_DEFINE_MATH_OPERATORS" }
+    defines { 
+        "IMGUI_DEFINE_MATH_OPERATORS",
+        "MICRO_USE_CORE"
+    }
+
+    includedirs { 
+        "%{wks.location}/Thirdparty/MicroCore/",
+        "%{IncludeDirs.Glm}",
+        "%{IncludeDirs.Libclang}",
+        "%{IncludeDirs.Spdlog}include/",
+        "%{IncludeDirs.Yaml}include/"
+    }
+
+    externalincludedirs {
+        "%{wks.location}/Thirdparty/MicroCore/",
+        "%{IncludeDirs.Glm}",
+        "%{IncludeDirs.Libclang}",
+        "%{IncludeDirs.Spdlog}include/",
+        "%{IncludeDirs.Yaml}include/"
+    }
+
+    --- NVIDIA 
+    filter "platforms:x64_nvidia"
+        architecture "x64"
+
+        --- GLOBAL DEFINES
+        defines { "MICRO_USE_NVIDIA" }
+
+    --- AMD
+    filter "platforms:x64_amd"
+        architecture "x64"
+
+        --- GLOBAL DEFINES
+        defines { "MICRO_USE_AMD" }
 
     --- WINDOWS
     filter "system:windows"

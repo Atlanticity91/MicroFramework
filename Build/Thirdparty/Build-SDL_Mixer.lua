@@ -138,11 +138,11 @@ project 'SDL_Mixer'
 			'%{IncludeDirs.SdlMixer}src/version.rc',
 		}
 
-        --- WINDOWS SPECIFIC PRE-BUILD COMMAND
-        prebuildmessage 'Copy SDL_Mixer dependencies'
-        prebuildcommands {
-           '{COPYDIR} %{IncludeDirs.SdlMixer}VisualC/external/optional/x64/ %{OutputDirs.Bin}/%{cfg.buildcfg}/'
-        }
+      --- WINDOWS SPECIFIC PRE-BUILD COMMAND
+      prebuildmessage 'Copy SDL_Mixer dependencies'
+      prebuildcommands {
+         '{COPYDIR} %{IncludeDirs.SdlMixer}VisualC/external/optional/x64/ %{OutputDirs.Bin}/%{cfg.buildcfg}/'
+      }
 
     --- CONFIGURATION
 	filter 'configurations:Debug'
