@@ -1,5 +1,5 @@
 project "Nsight"
-	kind "StaticLib"
+	kind "Utility"
 	language "C"
 	staticruntime "off"
 	location "%{OutputDirs.Solution}"
@@ -31,8 +31,8 @@ project "Nsight"
 		}
 
 		--- LINUX SPECIFIC PRE-BUILD COMMAND
-		prebuildmessage "Copy Nsight"
-		prebuildcommands { 
+		postbuildmessage "Copy Nsight"
+		postbuildcommands { 
 			"{COPYFILE} %{IncludeDirs.Nvidia}nsight/linux/libGFSDK_Aftermath_Lib.x64.so %{OutputDirs.Bin}%{cfg.buildcfg}/" 
 		}
 
@@ -55,8 +55,8 @@ project "Nsight"
 		}
 
 		--- WINDOWS SPECIFIC PREBUILD COMMAND
-		prebuildmessage "Copy Nsight"
-		prebuildcommands {
+		postbuildmessage "Copy Nsight"
+		postbuildcommands {
 			"{COPYFILE} %{IncludeDirs.Nvidia}nsight/windows/GFSDK_Aftermath_Lib.x64.lib %{OutputDirs.Bin}%{cfg.buildcfg}/",
 			"{COPYFILE} %{IncludeDirs.Nvidia}nsight/windows/GFSDK_Aftermath_Lib.x64.dll %{OutputDirs.Bin}%{cfg.buildcfg}/"
 		}

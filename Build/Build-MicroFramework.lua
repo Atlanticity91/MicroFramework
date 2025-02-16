@@ -85,8 +85,8 @@ project "MicroFramework"
 		"SDL_Mixer",
 		"Imgui",
 		"Lz4",
-		"MsdfAtlas",
-		"Thorvg"
+		"MsdfAtlas"
+		--, "Thorvg"
 	}
 
 	-- LINUX

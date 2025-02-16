@@ -1,5 +1,5 @@
 project "RenderDoc"
-	kind "StaticLib"
+	kind "Utility"
 	language "C"
 	staticruntime "off"
 	location "%{OutputDirs.Solution}"
