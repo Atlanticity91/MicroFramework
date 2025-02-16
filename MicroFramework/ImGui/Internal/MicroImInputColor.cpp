@@ -39,11 +39,11 @@
 namespace micro_im {
 
 	float convert_srgb_from_linear( const float theLinearValue ) {
-		return theLinearValue <= 0.0031308f ? theLinearValue * 12.92f : glm::pow<float>( theLinearValue, 1.0f / 2.2f ) * 1.055f - 0.055f;
+		return theLinearValue <= 0.0031308f ? theLinearValue * 12.92f : glm::pow( theLinearValue, 1.0f / 2.2f ) * 1.055f - 0.055f;
 	}
 
 	float convert_srgb_to_linear( const float thesRGBValue ) {
-		return thesRGBValue <= 0.04045f ?  thesRGBValue / 12.92f : glm::pow<float>( ( thesRGBValue + 0.055f ) / 1.055f, 2.2f );
+		return thesRGBValue <= 0.04045f ?  thesRGBValue / 12.92f : glm::pow( ( thesRGBValue + 0.055f ) / 1.055f, 2.2f );
 	}
 
 	ImVec4 ConvertFromSRGB( const ImVec4 colour ) {
@@ -58,8 +58,8 @@ namespace micro_im {
 	ImVec4 convert_to_srgb( const ImVec4 colour ) {
 		return {
 			std::pow( colour.x, 2.2f ),
-			glm::pow<float>( colour.y, 2.2f ),
-			glm::pow<float>( colour.z, 2.2f ),
+			glm::pow( colour.y, 2.2f ),
+			glm::pow( colour.z, 2.2f ),
 			colour.w 
 		};
 	}
