@@ -38,7 +38,7 @@ project "Msdf"
 
 	prebuildmessage "Copy Msdf configuration file"
 	prebuildcommands {
-		"{COPYFILE} %{wks.location}/Thirdparty/Configs/msdfgen-config.h %{IncludeDirs.Msdf}msdfgen/"
+		"{COPYFILE} %{IncludeDirs.Msdf}../Configs/msdfgen-config.h %{IncludeDirs.Msdf}msdfgen/"
 	}
 
 	--- LINUX
