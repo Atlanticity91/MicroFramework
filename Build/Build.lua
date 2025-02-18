@@ -24,6 +24,7 @@ workspace "Micro Solution"
         "MICRO_USE_CORE"
     }
 
+    --- GLOBAL DEFINES
     includedirs { 
         "%{wks.location}/Thirdparty/MicroCore/",
         "%{IncludeDirs.Glm}",

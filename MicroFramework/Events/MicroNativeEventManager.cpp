@@ -1,9 +1,9 @@
-/** 
+/**
  *
- *  __  __ _            ___                                  _   
+ *  __  __ _            ___                                  _
  * |  \/  (_)__ _ _ ___| __| _ __ _ _ __  _____ __ _____ _ _| |__
  * | |\/| | / _| '_/ _ \ _| '_/ _` | '  \/ -_) V  V / _ \ '_| / /
- * |_|  |_|_\__|_| \___/_||_| \__,_|_|_|_\___|\_/\_/\___/_| |_\_\                                                            
+ * |_|  |_|_\__|_| \___/_||_| \__,_|_|_|_\___|\_/\_/\___/_| |_\_\
  *
  * MIT License
  *
@@ -31,17 +31,46 @@
 
 #pragma once
 
-#include "MicroEventDispatcher.h"
+#include "__micro_framework_pch.h"
 
-micro_class MicroEventManager final : public MicroManager {
+////////////////////////////////////////////////////////////////////////////////////////////
+//		===	PUBLIC ===
+////////////////////////////////////////////////////////////////////////////////////////////
+MicroNativeEventManager::MicroNativeEventManager( )
+	: MicroManager{ }
+{ }
 
-public:
-	MicroEventManager( );
+bool MicroNativeEventManager::Create( ) {
+	return true;
+}
 
-	~MicroEventManager( ) = default;
+bool MicroNativeEventManager::PollEvents(
+	std::initializer_list<MicroNativeEventObserver*> observers
+) {
+    auto should_run = true;
+    auto sdl_event  = SDL_Event{ };
 
-	micro_implement( bool Create( ) );
+    while ( SDL_PollEvent( micro_ptr( sdl_event ) ) ) {
+        if (
+            sdl_event.type == SDL_EVENT_WINDOW_CLOSE_REQUESTED ||
+            sdl_event.type == SDL_EVENT_WINDOW_DESTROYED       ||
+            sdl_event.type == SDL_EVENT_QUIT
+        ) {
+            should_run = false;
 
-	micro_implement( void Terminate( ) );
+            break;
+        }
 
-};
+        for ( auto* observer : observers ) {
+            if ( observer == nullptr )
+                continue;
+
+            observer->PollEvent( sdl_event );
+        }
+    }
+
+    return should_run;
+}
+
+void MicroNativeEventManager::Terminate( ) {
+}

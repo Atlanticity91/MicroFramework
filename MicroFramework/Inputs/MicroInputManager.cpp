@@ -37,11 +37,15 @@
 //		===	PUBLIC ===
 ////////////////////////////////////////////////////////////////////////////////////////////
 MicroInputManager::MicroInputManager( )
-	: MicroManager{ }
+	: MicroManager{ },
+	MicroNativeEventObserver{ }
 { }
 
 bool MicroInputManager::Create( ) {
 	return false;
+}
+
+void MicroInputManager::PollEvent( const SDL_Event& event ) {
 }
 
 void MicroInputManager::Terminate( ) {

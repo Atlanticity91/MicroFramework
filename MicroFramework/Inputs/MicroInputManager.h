@@ -33,7 +33,9 @@
 
 #include "../Time/MicroDeltaTime.h"
 
-micro_class MicroInputManager final : public MicroManager {
+micro_class MicroInputManager final 
+	: public MicroManager, public MicroNativeEventObserver
+{
 
 public:
 	MicroInputManager( );
@@ -41,6 +43,8 @@ public:
 	~MicroInputManager( ) = default;
 
 	micro_implement( bool Create( ) );
+
+	micro_implement( void PollEvent( const SDL_Event& event ) );
 
 	micro_implement( void Terminate( ) );
 

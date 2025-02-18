@@ -34,7 +34,7 @@
 #include "MicroWindowSpecification.h"
 
 micro_class MicroWindow final 
-	: public MicroOpenGLWindow, public MicroVulkanWindow 
+	: public MicroNativeEventObserver, public MicroOpenGLWindow, public MicroVulkanWindow
 {
 
 private:
@@ -59,6 +59,8 @@ public:
 	void SetDimensions( const uint32_t width, const uint32_t height );
 
 	void SetFullscreen( bool full_screen );
+
+	micro_implement( void PollEvent( const SDL_Event& event ) );
 
 	void Destroy( );
 

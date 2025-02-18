@@ -42,10 +42,13 @@ struct MicroColor {
 
 };
 
-micro_class MicroGraphicManager final { 
+micro_class MicroGraphicManager final : public MicroNativeEventObserver {
 
 private:
 	MicroVulkan m_vulkan;
+	MicroVulkanRenderContext m_render_context;
+	bool m_should_resize;
+	bool m_should_render;
 
 public:
 	MicroGraphicManager( );
@@ -54,6 +57,25 @@ public:
 
 	bool Create( MicroWindow& window );
 
+	micro_implement( void PollEvent( const SDL_Event& event ) );
+
+	void MarkResize( );
+
+	bool Acquire( const MicroWindow& window );
+
+	void Present( const MicroWindow& window );
+
 	void Destroy( );
+
+public:
+	MicroVulkan GetVulkan( );
+
+	const MicroVulkan& GetVulkan( ) const;
+	
+	MicroVulkanRenderContext& GetRenderContext( );
+
+	bool GetShouldResize( ) const;
+
+	bool GetShouldRender( ) const;
 
 };

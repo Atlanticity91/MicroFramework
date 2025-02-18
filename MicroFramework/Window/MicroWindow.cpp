@@ -35,7 +35,8 @@
 //		===	PUBLIC ===
 ////////////////////////////////////////////////////////////////////////////////////////////
 MicroWindow::MicroWindow( )
-	: MicroOpenGLWindow{ },
+	: MicroNativeEventObserver{ },
+	MicroOpenGLWindow{ },
 	MicroVulkanWindow{ },
 	m_window{ NULL }
 { }
@@ -43,10 +44,10 @@ MicroWindow::MicroWindow( )
 bool MicroWindow::Create( const MicroWindowSpecification& specification ) {
 	const auto sdl_flags = GetInitializeFlags( );
 
-	if ( SDL_Init( sdl_flags ) == SDL_OK ) {
+	if ( SDL_Init( sdl_flags ) ) {
 		const auto* title_handle = specification.Title.c_str( );
 		const auto window_flags  = GetWindowFlags( specification );
-
+		
 		m_window = SDL_CreateWindow( title_handle, specification.Width, specification.Height, window_flags );
 
 		if ( GetIsValid( ) ) {
@@ -88,6 +89,9 @@ void MicroWindow::SetFullscreen( bool full_screen ) {
 	micro_assert( m_window != NULL, "Window handle can't be null to use this function, check if the window was created." );
 
 	SDL_SetWindowFullscreen( m_window, full_screen );
+}
+
+void MicroWindow::PollEvent( const SDL_Event& event ) {
 }
 
 void MicroWindow::Destroy( ) {

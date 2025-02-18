@@ -19,42 +19,44 @@ visual_studio = os.getenv( 'VS_PATH' )
 --- OUTPUT DIRS
 OutputDirs = { }
 
-OutputDirs[ 'Solution' ] = '%{wks.location}/Solution/'
-OutputDirs[ 'Bin' ] = '%{wks.location}/bin/'
-OutputDirs[ 'BinInt' ] = '%{wks.location}/bin-int/'
+OutputDirs[ 'Solution' ] = '%{wks.location}Solution/'
+OutputDirs[ 'Bin' ] = '%{wks.location}bin/'
+OutputDirs[ 'BinInt' ] = '%{wks.location}bin-int/'
 
 --- INCLUDE DIRS
 IncludeDirs = { }
 
-IncludeDirs[ 'MicroFramework' ] = '%{wks.location}/MicroFramework/'
-
---- MICRO CORE PROJECTS
-IncludeDirs[ 'MicroCore' ] = '%{wks.location}/Thirdparty/MicroCore/MicroCore/'
-IncludeDirs[ 'Glm' ] = '%{wks.location}/Thirdparty/MicroCore/Thirdparty/glm/'
-IncludeDirs[ 'Libclang' ] = '%{wks.location}/Thirdparty/MicroCore/Thirdparty/libclang/'
-IncludeDirs[ 'Spdlog' ] = '%{wks.location}/Thirdparty/MicroCore/Thirdparty/spdlog/'
-IncludeDirs[ 'Yaml' ] = '%{wks.location}/Thirdparty/MicroCore/Thirdparty/yaml-cpp/'
-
---- MICRO OPENGL PROJECTS
-IncludeDirs[ 'MicroOpenGL'] = '%{wks.location}/Thirdparty/MicroOpenGL/MicroOpenGL/'
-IncludeDirs[ 'Glew'] = '%{wks.location}/Thirdparty/MicroOpenGL/Thirdparty/GLW/Thirdparty/GLEW/'
-IncludeDirs[ 'Glw'] = '%{wks.location}/Thirdparty/MicroOpenGL/Thirdparty/GLW/'
-
---- MICRO VULKAN PROJECTS
-IncludeDirs[ 'MicroVulkan'] = '%{wks.location}/Thirdparty/MicroVulkan/MicroVulkan/'
-IncludeDirs[ 'Vulkan' ] = ( vulkan..'/'.._OPTIONS[ 'vk_version' ]..'/Include/' )
-
---- THIRDPARTY PROJECTS
-IncludeDirs[ 'Nvidia' ] = '%{wks.location}Thirdparty/Nvidia/'
-IncludeDirs[ 'Amd' ] = '%{wks.location}Thirdparty/Amd/'
-IncludeDirs[ 'Freetype' ] = '%{wks.location}/Thirdparty/Freetype/'
-IncludeDirs[ 'Msdf' ] = '%{wks.location}/Thirdparty/Msdf/'
-IncludeDirs[ 'Sdl' ] = '%{wks.location}/Thirdparty/Sdl/'
-IncludeDirs[ 'SdlMixer' ] = '%{wks.location}/Thirdparty/SdlMixer/'
-IncludeDirs[ 'Thorvg' ] = '%{wks.location}/Thirdparty/Thorvg/'
-IncludeDirs[ 'Imgui' ] = '%{wks.location}/Thirdparty/Imgui/'
-IncludeDirs[ 'Lz4' ] = '%{wks.location}/Thirdparty/Lz4/'
+--- MICRO FRAMEWORK PROJECTS
+local thirdparty = '%{wks.location}Thirdparty/'
+IncludeDirs[ 'MicroFramework' ] = '%{wks.location}MicroFramework/'
+IncludeDirs[ 'Nvidia' ] = ( thirdparty..'Nvidia/' )
+IncludeDirs[ 'Amd' ] = ( thirdparty..'Amd/' )
+IncludeDirs[ 'Freetype' ] = ( thirdparty..'Freetype/' )
+IncludeDirs[ 'Msdf' ] = ( thirdparty..'Msdf/' )
+IncludeDirs[ 'Sdl' ] = ( thirdparty..'Sdl/' )
+IncludeDirs[ 'SdlMixer' ] = ( thirdparty..'SdlMixer/' )
+IncludeDirs[ 'Thorvg' ] = ( thirdparty..'Thorvg/' )
+IncludeDirs[ 'Imgui' ] = ( thirdparty..'Imgui/' )
+IncludeDirs[ 'Lz4' ] = ( thirdparty..'Lz4/' )
 
 if render_doc ~= nil then
 	IncludeDirs[ 'RenderDoc' ] = ( render_doc..'/'  )
 end
+
+--- MICRO CORE PROJECTS
+local core_path = '%{wks.location}/Thirdparty/MicroCore/'
+IncludeDirs[ 'MicroCore' ] = ( core_path..'MicroCore/' )
+IncludeDirs[ 'Glm' ] = ( core_path..'Thirdparty/glm/' )
+IncludeDirs[ 'Libclang' ] = ( core_path..'Thirdparty/libclang/' )
+IncludeDirs[ 'Spdlog' ] = ( core_path..'Thirdparty/spdlog/' )
+IncludeDirs[ 'Yaml' ] = ( core_path..'Thirdparty/yaml-cpp/' )
+
+--- MICRO OPENGL PROJECTS
+local opengl_path = '%{wks.location}/Thirdparty/MicroOpenGL/'
+IncludeDirs[ 'MicroOpenGL'] = ( opengl_path..'MicroOpenGL/' )
+IncludeDirs[ 'Glew'] = ( opengl_path..'Thirdparty/GLW/Thirdparty/GLEW/' )
+IncludeDirs[ 'Glw'] = ( opengl_path..'Thirdparty/GLW/' )
+
+--- MICRO VULKAN PROJECTS
+IncludeDirs[ 'MicroVulkan'] = ( thirdparty..'MicroVulkan/MicroVulkan/' )
+IncludeDirs[ 'Vulkan' ] = ( vulkan..'/'.._OPTIONS[ 'vk_version' ]..'/' )

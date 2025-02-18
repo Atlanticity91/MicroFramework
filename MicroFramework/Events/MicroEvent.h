@@ -31,7 +31,7 @@
 
 #pragma once
 
-#include "../Window/MicroWindow.h"
+#include "../Memory/MicroMemoryManager.h"
 
-micro_class MicroEvent {
+micro_struct MicroEvent {
 };

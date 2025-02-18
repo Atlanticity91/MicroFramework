@@ -1,4 +1,4 @@
-/**
+/** 
  *
  *  __  __ _            ___                                  _
  * |  \/  (_)__ _ _ ___| __| _ __ _ _ __  _____ __ _____ _ _| |__
@@ -31,18 +31,21 @@
 
 #pragma once
 
-#include "__micro_framework_pch.h"
+#include "MicroNativeEventObserver.h"
 
-////////////////////////////////////////////////////////////////////////////////////////////
-//		===	PUBLIC ===
-////////////////////////////////////////////////////////////////////////////////////////////
-MicroEventManager::MicroEventManager( )
-	: MicroManager{ }
-{ }
+micro_class MicroNativeEventManager final : public MicroManager {
 
-bool MicroEventManager::Create( ) {
-	return false;
-}
+public:
+	MicroNativeEventManager( );
 
-void MicroEventManager::Terminate( ) {
-}
+	~MicroNativeEventManager( ) = default;
+
+	micro_implement( bool Create( ) );
+
+	bool PollEvents(
+		std::initializer_list<MicroNativeEventObserver*> observers 
+	);
+
+	micro_implement( void Terminate( ) );
+
+};

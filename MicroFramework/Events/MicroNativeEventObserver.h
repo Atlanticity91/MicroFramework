@@ -1,4 +1,4 @@
-/**
+/** 
  *
  *  __  __ _            ___                                  _
  * |  \/  (_)__ _ _ ___| __| _ __ _ _ __  _____ __ _____ _ _| |__
@@ -31,22 +31,10 @@
 
 #pragma once
 
-#include "__micro_framework_pch.h"
+#include "MicroEventDispatcher.h"
 
-////////////////////////////////////////////////////////////////////////////////////////////
-//		===	PUBLIC ===
-////////////////////////////////////////////////////////////////////////////////////////////
-MicroAudioManager::MicroAudioManager( )
-	: MicroManager{ },
-	MicroNativeEventObserver{ }
-{ }
+micro_interface MicroNativeEventObserver {
 
-bool MicroAudioManager::Create( ) {
-	return false;
-}
+	micro_abstract( void PollEvent( const SDL_Event& event ) );
 
-void MicroAudioManager::PollEvent( const SDL_Event& event ) {
-}
-
-void MicroAudioManager::Terminate( ) {
-}
+};

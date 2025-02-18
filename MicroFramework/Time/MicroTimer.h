@@ -31,7 +31,7 @@
 
 #pragma once
 
-#include "../Events/MicroEventManager.h"
+#include "../Window/MicroWindow.h"
 
 micro_class MicroTimer final { 
 };

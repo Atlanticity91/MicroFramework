@@ -31,7 +31,7 @@
 
 #pragma once
 
-#include "../Memory/MicroMemoryManager.h"
+#include "../Events/MicroNativeEventManager.h"
 
 /**
  * MicroWindowFlags struct

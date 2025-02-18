@@ -33,7 +33,9 @@
 
 #include "../Inputs/MicroInputManager.h"
 
-micro_class MicroAudioManager final : public MicroManager {
+micro_class MicroAudioManager final 
+	: public MicroManager, public MicroNativeEventObserver
+{
 
 public:
 	MicroAudioManager( );
@@ -41,6 +43,8 @@ public:
 	~MicroAudioManager( ) = default;
 
 	micro_implement( bool Create( ) );
+
+	micro_implement( void PollEvent( const SDL_Event& event ) );
 
 	micro_implement( void Terminate( ) );
 
