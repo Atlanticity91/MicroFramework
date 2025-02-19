@@ -56,13 +56,13 @@ void MicroImGLBackend::Prepare( ) {
 	ImGui_ImplSDL3_NewFrame( );
 }
 
-void MicroImGLBackend::Flush( void* context ) {
+void MicroImGLBackend::Submit( void* context ) {
 	auto* draw_data = ImGui::GetDrawData( );
 
 	ImGui_ImplOpenGL3_RenderDrawData( draw_data );
 }
 
-void MicroImGLBackend::Terminate( void* graphics ) {
+void MicroImGLBackend::Destroy( void* graphics ) {
 	ImGui_ImplOpenGL3_Shutdown( );
 	ImGui_ImplSDL3_Shutdown( );
 }

@@ -73,7 +73,7 @@ public:
 
 	virtual void Tick( void* graphics_api, void* render_context, void* user_data );
 
-	micro_optional2( void Delete( void* user_data ) );
+	micro_optional2( void Destroy( void* user_data ) );
 
 protected:
 	micro_optional2( void OnShow( void* user_data ) );

@@ -35,11 +35,16 @@
 //		===	PUBLIC ===
 ////////////////////////////////////////////////////////////////////////////////////////////
 MicroImManager::MicroImManager( )
-	: m_is_gl_backend{ false },
+	: MicroNativeEventObserver{ },
+	m_is_gl_backend{ false },
 	m_context{ },
 	m_backend{ nullptr },
 	m_windows{ }
 { }
+
+void MicroImManager::PollEvent( const SDL_Event& event ) {
+	ImGui_ImplSDL3_ProcessEvent( micro_ptr( event ) );
+}
 
 void MicroImManager::Show( ) {
 	m_context.Show( );
@@ -73,60 +78,60 @@ void MicroImManager::DeleteWindow( const std::string& name, void* user_data ) {
 	m_windows.Delete( name, user_data );
 }
 
-void MicroImManager::Flush( 
+void MicroImManager::Submit(
 	MicroVulkan& graphics_api,
 	MicroVulkanRenderContext& render_context,
 	void* user_data
 ) {
 	micro_assert( !m_is_gl_backend, "You can't Flush ImGui manager with Vulkan when ImGui backend is defined to OpenGL." );
 
-	Flush( micro_ptr_as( graphics_api, void* ), micro_ptr_as( render_context, void* ), user_data );
+	Submit( micro_ptr_as( graphics_api, void* ), micro_ptr_as( render_context, void* ), user_data );
 }
 
-void MicroImManager::Flush(
+void MicroImManager::Submit(
 	MicroOpenGL& graphics_api,
 	MicroGlRenderContext& render_context,
 	void* user_data
 ) {
-	Flush( micro_ptr_as( graphics_api, void* ), micro_ptr_as( render_context, void* ), user_data );
+	Submit( micro_ptr_as( graphics_api, void* ), micro_ptr_as( render_context, void* ), user_data );
 }
 
-void MicroImManager::Terminate( MicroVulkan& graphics, void* user_data ) {
+void MicroImManager::Destroy( MicroVulkan& graphics, void* user_data ) {
 	micro_assert( !m_is_gl_backend, "You can't Terminate ImGui manager with Vulkan when ImGui backend is defined to OpenGL." );
 
-	Terminate( micro_ptr_as( graphics, void* ), user_data );
+	Destroy( micro_ptr_as( graphics, void* ), user_data );
 }
 
-void MicroImManager::Terminate( MicroOpenGL& graphics, void* user_data ) {
-	Terminate( micro_ptr_as( graphics, void* ), user_data );
+void MicroImManager::Destroy( MicroOpenGL& graphics, void* user_data ) {
+	Destroy( micro_ptr_as( graphics, void* ), user_data );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 //		===	PRIVATE ===
 ////////////////////////////////////////////////////////////////////////////////////////////
-void MicroImManager::Flush( void* graphics_api, void* render_context, void* user_data ) {
+void MicroImManager::Submit( void* graphics_api, void* render_context, void* user_data ) {
 	if ( !m_context.GetIsVisible( ) )
 		return;
 	
 	m_backend->Prepare( );
 	m_context.Prepare( );
 	m_windows.Tick( graphics_api, render_context, user_data );
-	m_context.Flush( );
-	m_backend->Flush( render_context );
+	m_context.Submit( );
+	m_backend->Submit( render_context );
 }
 
-void MicroImManager::Terminate( void* graphics, void* user_data ) {
-	m_windows.Terminate( user_data );
+void MicroImManager::Destroy( void* graphics, void* user_data ) {
+	m_windows.Destroy( user_data );
 
 	if ( m_backend != nullptr ) {
-		m_backend->Terminate( graphics );
+		m_backend->Destroy( graphics );
 
 		delete m_backend;
 
 		m_backend = nullptr;
 	}
 
-	m_context.Terminate( );
+	m_context.Destroy( );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////
@@ -152,7 +157,7 @@ MicroImBackend* MicroImManager::GetBackend( ) const {
 	return m_backend;
 }
 
-MicroImWindowManager& MicroImManager::GetWindowManager( ) {
+MicroImWindowManager& MicroImManager::GetImWindowManager( ) {
 	return m_windows;
 }
 
@@ -160,11 +165,11 @@ bool MicroImManager::GetIsExemplesVisivle( ) const {
 	return m_windows.GetIsExemplesVisivle( );
 }
 
-bool MicroImManager::GetHasWindow( const std::string& name ) const {
+bool MicroImManager::GetHasImWindow( const std::string& name ) const {
 	return m_windows.GetHas( name );
 }
 
-MicroImWindow* MicroImManager::GetWindow( const std::string& name ) const {
+MicroImWindow* MicroImManager::GetImWindow( const std::string& name ) const {
 	return m_windows.Get( name );
 }
 

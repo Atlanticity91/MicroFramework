@@ -11,12 +11,14 @@ project "ImGui"
 	--- GLOBAL INCLUDES
 	includedirs {
 		"%{IncludeDirs.Imgui}",
-		"%{IncludeDirs.Sdl}include/"
+		"%{IncludeDirs.Sdl}include/",
+		"%{IncludeDirs.Vulkan}Include/"
 	}
 
 	externalincludedirs {
 		"%{IncludeDirs.Imgui}",
-		"%{IncludeDirs.Sdl}include/"
+		"%{IncludeDirs.Sdl}include/",
+		"%{IncludeDirs.Vulkan}Include/"
 	}
 
 	--- GLOBAL SOURCE FILES
@@ -35,7 +37,9 @@ project "ImGui"
 		"%{IncludeDirs.Imgui}backends/imgui_impl_sdl3.h",
 		"%{IncludeDirs.Imgui}backends/imgui_impl_sdl3.cpp",
 		"%{IncludeDirs.Imgui}backends/imgui_impl_opengl3.h",
-		"%{IncludeDirs.Imgui}backends/imgui_impl_opengl3.cpp"
+		"%{IncludeDirs.Imgui}backends/imgui_impl_opengl3.cpp",
+		"%{IncludeDirs.Imgui}backends/imgui_impl_vulkan.h",
+		"%{IncludeDirs.Imgui}backends/imgui_impl_vulkan.cpp"
 	}
 
 	--- LINUX

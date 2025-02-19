@@ -31,14 +31,17 @@
 
 #pragma once
 
-#include "MicroImVKBackend.h"
+#include "MicroImBackend.h"
 
-micro_class MicroImGLBackend final : public MicroImBackend {
+micro_class MicroImVKBackend final : public MicroImBackend {
+
+private:
+	VkDescriptorPool m_local_pools;
 
 public:
-	MicroImGLBackend( );
+	MicroImVKBackend( );
 
-	~MicroImGLBackend( ) = default;
+	~MicroImVKBackend( ) = default;
 
 	micro_implement( bool Create(
 		const MicroWindow& window,
@@ -48,8 +51,26 @@ public:
 
 	micro_implement( void Prepare( ) );
 
-	micro_implement( void Flush( void* graphics ) );
+	micro_implement( void Submit( void* context ) );
 
-	micro_implement( void Terminate( void* graphics ) );
+	micro_implement( void Destroy( void* graphics ) );
+
+private:
+	bool CreatePools(
+		const MicroImSpecification& specification,
+		MicroVulkan& graphics
+	);
+
+	bool CreateInstance(
+		const MicroWindow& window,
+		const MicroImSpecification& specification,
+		MicroVulkan& graphics
+	);
+
+private:
+	static void CheckVulkanResult( VkResult result );
+
+public:
+	const VkDescriptorPool& GetLocalPools( ) const;
 
 };

@@ -53,16 +53,18 @@ void MicroImVKBackend::Prepare( ) {
     ImGui_ImplSDL3_NewFrame( );
 }
 
-void MicroImVKBackend::Flush( void* context ) {
+void MicroImVKBackend::Submit( void* context ) {
     auto* render_context = micro_cast( context, MicroVulkanRenderContext* );
     auto* draw_data      = ImGui::GetDrawData( );
 
     ImGui_ImplVulkan_RenderDrawData( draw_data, render_context->CommandBuffer );
 }
 
-void MicroImVKBackend::Terminate( void* graphics ) {
+void MicroImVKBackend::Destroy( void* graphics ) {
     auto* vk_graphics = micro_cast( graphics, MicroVulkan* );
     auto& device      = vk_graphics->GetDevice( );
+
+    vk_graphics->Wait( );
 
     ImGui_ImplVulkan_Shutdown( );
     ImGui_ImplSDL3_Shutdown( );
@@ -77,6 +79,8 @@ bool MicroImVKBackend::CreatePools(
     const MicroImSpecification& specification,
     MicroVulkan& graphics
 ) {
+    micro_assert( specification.PoolSize > 0, "You can't create Vulkan descriptor pool size, they need at least 1 element." );
+
     VkDescriptorPoolSize pool_sizes[] = {
         { VK_DESCRIPTOR_TYPE_SAMPLER               , specification.PoolSize },
         { VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, specification.PoolSize },
@@ -115,14 +119,14 @@ bool MicroImVKBackend::CreateInstance(
     auto init_info        = ImGui_ImplVulkan_InitInfo{ };
     auto queue            = queues.Acquire( vk::QUEUE_TYPE_GRAPHICS );
     auto state            = false;
-
+    
     init_info.Instance        = graphics.GetInstance( );
     init_info.PhysicalDevice  = device.GetPhysical( );
     init_info.Device          = device;
     init_info.QueueFamily     = queues.GetQueueFamily( vk::QUEUE_TYPE_GRAPHICS );
     init_info.Queue           = queue.Queue;
     init_info.DescriptorPool  = m_local_pools;
-    init_info.RenderPass      = VK_NULL_HANDLE;
+    init_info.RenderPass      = graphics.GetRenderPass( specification.RenderPass );
     init_info.MinImageCount   = swap_spec.ImageCount;
     init_info.ImageCount      = swap_spec.ImageCount;
     init_info.MSAASamples     = VK_SAMPLE_COUNT_1_BIT;

@@ -34,11 +34,11 @@
 #include "__micro_framework_pch.h"
 
 MicroImSpecification::MicroImSpecification( )
-	: MicroImSpecification{ "", 0, 0 }
+	: MicroImSpecification{ 0, 0, 0 }
 { }
 
 MicroImSpecification::MicroImSpecification(
-	const std::string& render_pass,
+	const uint32_t render_pass,
 	const uint32_t subpass,
 	const uint32_t pool_size
 )

@@ -31,20 +31,25 @@
 
 #pragma once
 
-#include "MicroImSpecification.h"
+#include "MicroImVKBackend.h"
 
-micro_interface MicroImBackend {
+micro_class MicroImGLBackend final : public MicroImBackend {
 
-	micro_abstract( bool Create(
+public:
+	MicroImGLBackend( );
+
+	~MicroImGLBackend( ) = default;
+
+	micro_implement( bool Create(
 		const MicroWindow& window,
 		const MicroImSpecification& specification,
 		void* graphics
 	) );
 
-	micro_abstract( void Prepare( ) );
+	micro_implement( void Prepare( ) );
 
-	micro_abstract( void Flush( void* context ) );
+	micro_implement( void Submit( void* graphics ) );
 
-	micro_abstract( void Terminate( void* graphics ) );
+	micro_implement( void Destroy( void* graphics ) );
 
 };

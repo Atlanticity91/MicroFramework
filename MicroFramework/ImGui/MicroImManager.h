@@ -33,7 +33,7 @@
 
 #include "Extensions/MicroImTextExtension.h"
 
-micro_class MicroImManager final {
+micro_class MicroImManager final : public MicroNativeEventObserver {
 
 private:
 	bool m_is_gl_backend;
@@ -45,6 +45,8 @@ public:
 	MicroImManager( );
 
 	~MicroImManager( ) = default;
+
+	micro_implement( void PollEvent( const SDL_Event& event ) );
 
 	void Show( );
 
@@ -62,21 +64,21 @@ public:
 
 	void DeleteWindow( const std::string& name, void* user_data );
 
-	void Flush(
+	void Submit(
 		MicroVulkan& graphics_api,
 		MicroVulkanRenderContext& render_context,
 		void* user_data
 	);
 
-	void Flush( 
+	void Submit(
 		MicroOpenGL& graphics_api,
 		MicroGlRenderContext& render_context,
 		void* user_data
 	);
 
-	void Terminate( MicroVulkan& graphics, void* user_data );
+	void Destroy( MicroVulkan& graphics, void* user_data );
 
-	void Terminate( MicroOpenGL& graphics, void* user_data );
+	void Destroy( MicroOpenGL& graphics, void* user_data );
 
 public:
 	template<typename ImBackend, typename GraphicsAPI>
@@ -94,7 +96,7 @@ public:
 			if ( m_backend = new ImBackend{ } )
 				result = m_backend->Create( window, specification, micro_ptr_as( graphics, void* ) );
 			else
-				m_context.Terminate( );
+				m_context.Destroy( );
 		}
 
 		return result;
@@ -102,14 +104,14 @@ public:
 
 	template<typename Window, typename... Args>
 		requires ( std::is_base_of_v<MicroImWindow, Window> )
-	void Create( void* user_data, Args&&... args ) { 
+	void CreateImWindow( void* user_data, Args&&... args ) { 
 		m_windows.Create<Window, Args...>( user_data, std::forward<Args>( args )... );
 	};
 
 private:
-	void Flush( void* graphics_api, void* render_context, void* user_data );
+	void Submit( void* graphics_api, void* render_context, void* user_data );
 
-	void Terminate( void* graphics, void* user_data );
+	void Destroy( void* graphics, void* user_data );
 
 public:
 	bool GetIsValid( ) const;
@@ -122,13 +124,13 @@ public:
 
 	MicroImBackend* GetBackend( ) const;
 
-	MicroImWindowManager& GetWindowManager( );
+	MicroImWindowManager& GetImWindowManager( );
 
 	bool GetIsExemplesVisivle( ) const;
 
-	bool GetHasWindow( const std::string& name ) const;
+	bool GetHasImWindow( const std::string& name ) const;
 
-	MicroImWindow* GetWindow( const std::string& name ) const;
+	MicroImWindow* GetImWindow( const std::string& name ) const;
 
 public:
 	template<typename ImBackend>
@@ -139,7 +141,7 @@ public:
 
 	template<typename ImWindow>
 		requires ( std::is_base_of_v<MicroImWindow, ImWindow> )
-	ImWindow* GetWindowAs( const std::string& name ) const { 
+	ImWindow* GetImWindowAs( const std::string& name ) const { 
 		return m_windows.GetAs<ImWindow>( name );
 	};
 

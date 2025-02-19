@@ -58,7 +58,7 @@ public:
 
 	void Tick( void* graphics_api, void* render_context, void* user_data );
 
-	void Terminate( void* user_data );
+	void Destroy( void* user_data );
 
 public:
 	template<typename Window, typename... Args>

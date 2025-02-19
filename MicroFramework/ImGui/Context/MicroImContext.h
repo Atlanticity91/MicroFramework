@@ -31,7 +31,7 @@
 
 #pragma once
 
-#include "MicroImGLBackend.h"
+#include "Backends/MicroImGLBackend.h"
 
 micro_class MicroImContext final {
 
@@ -60,9 +60,9 @@ public:
 
 	void Prepare( );
 
-	void Flush( );
+	void Submit( );
 
-	void Terminate( );
+	void Destroy( );
 	
 public:
 	bool GetIsValid( ) const;

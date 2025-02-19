@@ -66,7 +66,7 @@ void MicroImWindowManager::Delete( const std::string& name, void* user_data ) {
 	auto iterator = m_windows.find( name );
 
 	if ( iterator != m_windows.end( ) ) {
-		iterator->second->Delete( user_data );
+		iterator->second->Destroy( user_data );
 
 		delete iterator->second;
 
@@ -89,11 +89,11 @@ void MicroImWindowManager::Tick(
 	}
 }
 
-void MicroImWindowManager::Terminate( void* user_data ) {
+void MicroImWindowManager::Destroy( void* user_data ) {
 	for ( auto& pair : m_windows ) {
 		auto* window = pair.second;
 
-		window->Delete( user_data );
+		window->Destroy( user_data );
 
 		delete window;
 	}

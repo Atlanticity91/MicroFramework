@@ -91,11 +91,11 @@ void MicroImContext::Prepare( ) {
 	ImGui::NewFrame( ); 
 }
 
-void MicroImContext::Flush( ) {
+void MicroImContext::Submit( ) {
 	ImGui::Render( );
 }
 
-void MicroImContext::Terminate( ) {
+void MicroImContext::Destroy( ) {
 	if ( GetIsValid( ) )
 		ImGui::DestroyContext( );
 }

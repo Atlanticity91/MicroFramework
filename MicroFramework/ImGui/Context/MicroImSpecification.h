@@ -35,14 +35,14 @@
 
 micro_struct MicroImSpecification {
 
-	std::string RenderPass;
+	uint32_t RenderPass;
 	uint32_t Subpass;
 	uint32_t PoolSize;
 
 	MicroImSpecification( );
 
 	MicroImSpecification(
-		const std::string& render_pass,
+		const uint32_t render_pass,
 		const uint32_t sub_pass,
 		const uint32_t pool_size
 	);
