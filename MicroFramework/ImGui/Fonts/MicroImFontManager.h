@@ -33,8 +33,14 @@
 
 #include "MicroImFontEmbedded.h"
 
-// TODO : REMOVE TinyFilesystem FOR MicroFilesystem
-class TinyFilesystem { };
+micro_class MicroFilesystem {
+
+public:
+	std::string GetRealPath( const std::string& path ) const {
+		return path;
+	};
+
+};
 
 micro_class MicroImFontManager final {
 
@@ -48,15 +54,21 @@ public:
 
 	void Initialize( );
 	
-	bool LoadFont(
-		TinyFilesystem& filesystem,
-		MicroGraphicManager& graphics,
-		const MicroImFont& font
+	bool LoadFont( const MicroImFont& font );
+
+	bool LoadFonts( const std::vector<MicroImFont>& fonts );
+
+	bool LoadFonts( std::initializer_list<MicroImFont> fonts );
+
+	bool LoadFont( MicroFilesystem& filesystem, const MicroImFont& font );
+
+	bool LoadFonts(
+		MicroFilesystem& filesystem,
+		const std::vector<MicroImFont>& fonts
 	);
 
 	bool LoadFonts(
-		TinyFilesystem& filesystem,
-		MicroGraphicManager& graphics,
+		MicroFilesystem& filesystem,
 		std::initializer_list<MicroImFont> fonts
 	);
 
@@ -70,10 +82,36 @@ public:
 	bool CreateFont(
 		const std::string& name,
 		const float size,
+		const MicroImFontEmbedded& font
+	);
+
+	bool CreateFonts(
+		const std::string& name,
+		const float size,
+		const std::vector<MicroImFontEmbedded> fonts
+	);
+
+	bool CreateFonts(
+		const std::string& name,
+		const float size,
 		std::initializer_list<MicroImFontEmbedded> fonts
 	);
 
 	void SetFont( const std::string& name );
+
+private:
+	bool LoadFont( 
+		const std::string& alias,
+		micro_string font_path, 
+		const float font_size
+	);
+
+	bool CreateFonts(
+		const std::string& name,
+		const float size,
+		const uint32_t font_count,
+		const MicroImFontEmbedded* font_data
+	);
 
 public:
 	bool GetHasFont( const std::string& name ) const;

@@ -37,6 +37,8 @@
 MicroImManager::MicroImManager( )
 	: MicroNativeEventObserver{ },
 	m_is_gl_backend{ false },
+	m_theme{ },
+	m_fonts{ },
 	m_context{ },
 	m_backend{ nullptr },
 	m_windows{ }
@@ -44,6 +46,89 @@ MicroImManager::MicroImManager( )
 
 void MicroImManager::PollEvent( const SDL_Event& event ) {
 	ImGui_ImplSDL3_ProcessEvent( micro_ptr( event ) );
+}
+
+MicroImTheme& MicroImManager::SetTheme( ImGuiStyleVar variable, const float value ) {
+	return m_theme.Set( variable, value );
+}
+
+MicroImTheme& MicroImManager::SetTheme( ImGuiStyleVar variable, const ImVec2& value ) {
+	return m_theme.Set( variable, value );
+}
+
+MicroImTheme& MicroImManager::SetTheme( ImGuiCol color, const ImVec4& value ) {
+	return m_theme.Set( color, value );
+}
+
+MicroImTheme& MicroImManager::ResetTheme( ) {
+	return m_theme.Reset( );
+}
+
+bool MicroImManager::LoadFont( const MicroImFont& font ) {
+	return m_fonts.LoadFont( font );
+}
+
+bool MicroImManager::LoadFonts( const std::vector<MicroImFont>& fonts ) {
+	return m_fonts.LoadFonts( fonts );
+}
+
+bool MicroImManager::LoadFonts( std::initializer_list<MicroImFont> fonts ) {
+	return m_fonts.LoadFonts( fonts );
+}
+
+bool MicroImManager::LoadFont( MicroFilesystem& filesystem, const MicroImFont& font ) {
+	return m_fonts.LoadFont( filesystem, font );
+}
+
+bool MicroImManager::LoadFonts(
+	MicroFilesystem& filesystem,
+	const std::vector<MicroImFont>& fonts
+) {
+	return m_fonts.LoadFonts( filesystem, fonts );
+}
+
+bool MicroImManager::LoadFonts(
+	MicroFilesystem& filesystem,
+	std::initializer_list<MicroImFont> fonts
+) {
+	return m_fonts.LoadFonts( filesystem, fonts );
+}
+
+bool MicroImManager::AddFont(
+	const std::string& alias,
+	const uint32_t length,
+	const uint32_t* data,
+	const float size
+) {
+	return m_fonts.AddFont( alias, length, data, size );
+}
+
+bool MicroImManager::CreateFont(
+	const std::string& name,
+	const float size,
+	const MicroImFontEmbedded& font
+) {
+	return m_fonts.CreateFont( name, size, font );
+}
+
+bool MicroImManager::CreateFonts(
+	const std::string& name,
+	const float size,
+	const std::vector<MicroImFontEmbedded> fonts
+) {
+	return m_fonts.CreateFonts( name, size, fonts );
+}
+
+bool MicroImManager::CreateFonts(
+	const std::string& name,
+	const float size,
+	std::initializer_list<MicroImFontEmbedded> fonts
+) {
+	return m_fonts.CreateFonts( name, size, fonts );
+}
+
+void MicroImManager::SetFont( const std::string& name ) {
+	m_fonts.SetFont( name );
 }
 
 void MicroImManager::Show( ) {
@@ -90,7 +175,7 @@ void MicroImManager::Submit(
 
 void MicroImManager::Submit(
 	MicroOpenGL& graphics_api,
-	MicroGlRenderContext& render_context,
+	MicroOpenGLRenderContext& render_context,
 	void* user_data
 ) {
 	Submit( micro_ptr_as( graphics_api, void* ), micro_ptr_as( render_context, void* ), user_data );
@@ -147,6 +232,18 @@ bool MicroImManager::GetIsGlBackend( ) const {
 
 bool MicroImManager::GetIsVisible( ) const {
 	return m_context.GetIsVisible( );
+}
+
+MicroImTheme& MicroImManager::GetTheme( ) {
+	return m_theme;
+}
+
+const MicroImTheme& MicroImManager::GetTheme( ) const {
+	return m_theme;
+}
+
+bool MicroImManager::GetHasFont( const std::string& name ) const {
+	return m_fonts.GetHasFont( name );
 }
 
 MicroImContext& MicroImManager::GetContext( ) {

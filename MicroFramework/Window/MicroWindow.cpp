@@ -38,7 +38,8 @@ MicroWindow::MicroWindow( )
 	: MicroNativeEventObserver{ },
 	MicroOpenGLWindow{ },
 	MicroVulkanWindow{ },
-	m_window{ NULL }
+	m_window{ nullptr },
+	m_gl_context{ nullptr }
 { }
 
 bool MicroWindow::Create( const MicroWindowSpecification& specification ) {
@@ -48,24 +49,50 @@ bool MicroWindow::Create( const MicroWindowSpecification& specification ) {
 		const auto* title_handle = specification.Title.c_str( );
 		const auto window_flags  = GetWindowFlags( specification );
 		
-		m_window = SDL_CreateWindow( title_handle, specification.Width, specification.Height, window_flags );
-
-		if ( GetIsValid( ) ) {
+		if ( m_window = SDL_CreateWindow( title_handle, specification.Width, specification.Height, window_flags ) )
 			SDL_ShowWindow( m_window );
-		}
 	}
 
 	return GetIsValid( );
 }
 
-bool MicroWindow::CreateSurface( VkInstance& instance, VkSurfaceKHR& surface ) const {
+bool MicroWindow::CreateGLSurface(
+	const GlwGraphicSpecification& specification
+) {
+	SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, specification.Backend.Major );
+	SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, specification.Backend.Minor );
+	SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, specification.Backend.Profile );
+	SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, (uint32_t)specification.Backend.DoubleBuffer );
+
+	if ( m_gl_context = SDL_GL_CreateContext( m_window ) )
+		SDL_GL_MakeCurrent( m_window, m_gl_context );
+
+	return m_gl_context != nullptr;
+}
+
+void MicroWindow::SetupGLContext(
+	const GlwGraphicSpecification& specification
+) {
+	SDL_GL_SetSwapInterval( specification.Backend.SwapInterval );
+}
+
+void MicroWindow::SwapGLBuffers( ) {
+	SDL_GL_SwapWindow( m_window );
+}
+
+void MicroWindow::DestroyGLSurface( ) {
+	if ( m_gl_context != nullptr )
+		SDL_GL_DestroyContext( m_gl_context );
+}
+
+bool MicroWindow::CreateVKSurface( VkInstance& instance, VkSurfaceKHR& surface ) const {
 	const auto* allocator = micro_ptr( vk::GetAllocationCallback( ) );
 
 	return SDL_Vulkan_CreateSurface( m_window, instance, allocator, micro_ptr( surface ) );
 }
 
 void MicroWindow::SetTitle( std::string&& title ) {
-	micro_assert( m_window != NULL, "Window handle can't be null to use this function, check if the window was created." );
+	micro_assert( m_window != nullptr, "Window handle can't be null to use this function, check if the window was created." );
 	micro_assert( !title.empty( ), "Window title can't be null" );
 
 	const auto* title_handle = title.c_str( );
@@ -78,7 +105,7 @@ void MicroWindow::SetDimensions( const micro_upoint& dimensions ) {
 }
 
 void MicroWindow::SetDimensions( const uint32_t width, const uint32_t height ) {
-	micro_assert( m_window != NULL, "Window handle can't be null to use this function, check if the window was created." );
+	micro_assert( m_window != nullptr, "Window handle can't be null to use this function, check if the window was created." );
 	micro_assert( width > 0, "Window title can't be null" );
 	micro_assert( height > 0, "Window title can't be null" );
 
@@ -86,7 +113,7 @@ void MicroWindow::SetDimensions( const uint32_t width, const uint32_t height ) {
 }
 
 void MicroWindow::SetFullscreen( bool full_screen ) {
-	micro_assert( m_window != NULL, "Window handle can't be null to use this function, check if the window was created." );
+	micro_assert( m_window != nullptr, "Window handle can't be null to use this function, check if the window was created." );
 
 	SDL_SetWindowFullscreen( m_window, full_screen );
 }
@@ -104,7 +131,7 @@ void MicroWindow::Destroy( ) {
 ////////////////////////////////////////////////////////////////////////////////////////////
 //		===	PUBLIC GET ===
 ////////////////////////////////////////////////////////////////////////////////////////////
-void MicroWindow::GetExtensions( std::vector<micro_string>& extension_list ) const {
+void MicroWindow::GetVKExtensions( std::vector<micro_string>& extension_list ) const {
 	auto extension_count  = (uint32_t)0;
 	const auto* extension = SDL_Vulkan_GetInstanceExtensions( micro_ptr( extension_count ) );
 	
@@ -118,8 +145,12 @@ SDL_Window* MicroWindow::Get( ) const {
 	return m_window;
 }
 
+SDL_GLContext MicroWindow::GetGLContext( ) const {
+	return m_gl_context;
+}
+
 bool MicroWindow::GetIsValid( ) const {
-	return ( m_window != NULL );
+	return ( m_window != nullptr );
 }
 
 bool MicroWindow::GetIsFullScreen( ) const {
@@ -129,7 +160,7 @@ bool MicroWindow::GetIsFullScreen( ) const {
 uint32_t MicroWindow::GetWidth( ) const {
 	auto width = (int32_t)0;
 
-	SDL_GetWindowSizeInPixels( m_window, micro_ptr( width ), NULL );
+	SDL_GetWindowSizeInPixels( m_window, micro_ptr( width ), nullptr );
 
 	return (uint32_t)width;
 }
@@ -137,9 +168,13 @@ uint32_t MicroWindow::GetWidth( ) const {
 uint32_t MicroWindow::GetHeight( ) const {
 	auto height = (int32_t)0;
 
-	SDL_GetWindowSizeInPixels( m_window, NULL, micro_ptr( height ) );
+	SDL_GetWindowSizeInPixels( m_window, nullptr, micro_ptr( height ) );
 
 	return (uint32_t)height;
+}
+
+glm::ivec2 MicroWindow::GetDimensions( ) const {
+	return GetVKDimensions( );
 }
 
 micro_upoint MicroWindow::GetVKDimensions( ) const {

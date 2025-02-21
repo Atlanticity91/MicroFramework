@@ -43,9 +43,9 @@ bool MicroImGLBackend::Create(
 	const MicroImSpecification& specification,
 	void* graphics
 ) {
-	auto* gl_graphics  = micro_cast( graphics, MicroOpenGL* );
-	auto* glsl_version = gl_graphics->GetGLSLVersion( );
-	auto* context	   = SDL_GL_GetCurrentContext( );
+	const auto* gl_graphics  = micro_cast( graphics, MicroOpenGL* );
+	const auto* glsl_version = gl_graphics->GetGLSLVersion( ).c_str( );
+	auto* context			 = SDL_GL_GetCurrentContext( );
 
 	return  ImGui_ImplSDL3_InitForOpenGL( window, context ) &&
 			ImGui_ImplOpenGL3_Init( glsl_version );	

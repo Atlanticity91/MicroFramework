@@ -37,6 +37,8 @@ micro_class MicroImManager final : public MicroNativeEventObserver {
 
 private:
 	bool m_is_gl_backend;
+	MicroImTheme m_theme;
+	MicroImFontManager m_fonts;
 	MicroImContext m_context;
 	MicroImBackend* m_backend;
 	MicroImWindowManager m_windows;
@@ -47,6 +49,59 @@ public:
 	~MicroImManager( ) = default;
 
 	micro_implement( void PollEvent( const SDL_Event& event ) );
+
+	MicroImTheme& SetTheme( ImGuiStyleVar variable, const float value );
+
+	MicroImTheme& SetTheme( ImGuiStyleVar variable, const ImVec2& value );
+
+	MicroImTheme& SetTheme( ImGuiCol color, const ImVec4& value );
+
+	MicroImTheme& ResetTheme( );
+
+	bool LoadFont( const MicroImFont& font );
+
+	bool LoadFonts( const std::vector<MicroImFont>& fonts );
+
+	bool LoadFonts( std::initializer_list<MicroImFont> fonts );
+
+	bool LoadFont( MicroFilesystem& filesystem, const MicroImFont& font );
+
+	bool LoadFonts(
+		MicroFilesystem& filesystem,
+		const std::vector<MicroImFont>& fonts
+	);
+
+	bool LoadFonts(
+		MicroFilesystem& filesystem,
+		std::initializer_list<MicroImFont> fonts
+	);
+
+	bool AddFont(
+		const std::string& alias,
+		const uint32_t length,
+		const uint32_t* data,
+		const float size
+	);
+
+	bool CreateFont(
+		const std::string& name,
+		const float size,
+		const MicroImFontEmbedded& font
+	);
+
+	bool CreateFonts(
+		const std::string& name,
+		const float size,
+		const std::vector<MicroImFontEmbedded> fonts
+	);
+
+	bool CreateFonts(
+		const std::string& name,
+		const float size,
+		std::initializer_list<MicroImFontEmbedded> fonts
+	);
+
+	void SetFont( const std::string& name );
 
 	void Show( );
 
@@ -72,7 +127,7 @@ public:
 
 	void Submit(
 		MicroOpenGL& graphics_api,
-		MicroGlRenderContext& render_context,
+		MicroOpenGLRenderContext& render_context,
 		void* user_data
 	);
 
@@ -81,21 +136,27 @@ public:
 	void Destroy( MicroOpenGL& graphics, void* user_data );
 
 public:
-	template<typename ImBackend, typename GraphicsAPI>
-		requires ( std::is_base_of_v<MicroImBackend, ImBackend> )
+	template<typename GraphicsAPI>
+		requires ( std::is_same_v<GraphicsAPI, MicroOpenGL> || std::is_same_v<GraphicsAPI, MicroVulkan> )
 	bool Create(
 		const MicroWindow& window,
 		const MicroImSpecification& specification,
 		GraphicsAPI& graphics
 	) {
-		micro_assert( m_backend == nullptr, "You can't create an ImGui mannager backend when one is already defined." );
-
 		auto result = false;
 
 		if ( m_context.Create( ) ) {
-			if ( m_backend = new ImBackend{ } )
-				result = m_backend->Create( window, specification, micro_ptr_as( graphics, void* ) );
-			else
+			micro_compile_if( std::is_same_v<GraphicsAPI, MicroOpenGL> )
+				m_backend = new MicroImGLBackend{ };
+			micro_compile_elif( std::is_same_v<GraphicsAPI, MicroVulkan> )
+				m_backend = new MicroImVKBackend{ };
+
+			if ( m_backend != nullptr ) {
+				if ( result = m_backend->Create( window, specification, micro_ptr_as( graphics, void* ) ) ) {
+					m_theme.Initialize( );
+					m_fonts.Initialize( );
+				}
+			} else
 				m_context.Destroy( );
 		}
 
@@ -119,6 +180,12 @@ public:
 	bool GetIsGlBackend( ) const;
 
 	bool GetIsVisible( ) const;
+
+	MicroImTheme& GetTheme( );
+
+	const MicroImTheme& GetTheme( ) const;
+
+	bool GetHasFont( const std::string& name ) const;
 
 	MicroImContext& GetContext( );
 

@@ -42,46 +42,90 @@ void MicroImFontManager::Initialize( ) {
     if ( AddFont( "Caskaydia", TinyCaskaydia_length, TinyCaskaydia_data, 16.f ) ) {
         CreateFont(
             "Caskaydia", 16.f,
-            { { TinyFontAwesome_900_length, TinyFontAwesome_900_data, MICRO_IM_ICON_MIN, MICRO_IM_ICON_MAX } }
+            { TinyFontAwesome_900_length, TinyFontAwesome_900_data, MICRO_IM_ICON_MIN, MICRO_IM_ICON_MAX }
         );
     }
 }
 
+bool MicroImFontManager::LoadFont( const MicroImFont& font ) {
+    const auto* path = font.Path.c_str( );
+    auto state = false;
+
+    if ( std::filesystem::is_regular_file( path ) )
+        state = LoadFont( font.Alias, path, font.Size );
+
+    return state;
+}
+
+bool MicroImFontManager::LoadFonts( const std::vector<MicroImFont>& fonts ) {
+    auto state = false;
+
+    for ( const auto& font : fonts ) {
+        state = LoadFont( font );
+
+        if ( !state )
+            break;
+    }
+
+    return state;
+}
+
+bool MicroImFontManager::LoadFonts( std::initializer_list<MicroImFont> fonts ) {
+    auto state = false;
+
+    for ( const auto& font : fonts ) {
+        state = LoadFont( font );
+
+        if ( !state )
+            break;
+    }
+
+    return state;
+}
+
 bool MicroImFontManager::LoadFont(
-    TinyFilesystem& filesystem,
-    MicroGraphicManager& graphics,
+    MicroFilesystem& filesystem,
     const MicroImFont& font
 ) {
-    auto state = false;//filesystem.GetFileExist( font.Path );
+    const auto real_path = filesystem.GetRealPath( font.Path );
+    auto state           = false;
 
-    if ( state ) {
-        auto* path = font.Path.c_str( );
-        auto& io   = ImGui::GetIO( );
+    if ( real_path.size( ) > 0 ) {
+        const auto* path = real_path.c_str( );
 
-        if ( auto* im_font = io.Fonts->AddFontFromFileTTF( path, font.Size ) ) {
-            m_fonts.emplace( font.Alias, im_font );
-
-            state = io.Fonts->Build( );
-        }
+        state = LoadFont( font.Alias, path, font.Size );
     }
 
     return state;
 }
 
 bool MicroImFontManager::LoadFonts(
-    TinyFilesystem& filesystem,
-    MicroGraphicManager& graphics,
+    MicroFilesystem& filesystem,
+    const std::vector<MicroImFont>& fonts
+) {
+    auto state = false;
+
+    for ( const auto& font : fonts ) {
+        state = LoadFont( filesystem, font );
+
+        if ( !state )
+            break;
+    }
+
+    return state;
+}
+
+bool MicroImFontManager::LoadFonts(
+    MicroFilesystem& filesystem,
     std::initializer_list<MicroImFont> fonts
 ) {
-    auto state = fonts.size( ) > 0;
+    auto state = false;
 
-    if ( state ) {
-        for ( auto& font : fonts ) {
-            state = LoadFont( filesystem, graphics, font );
+    for ( const auto& font : fonts ) {
+        state = LoadFont( filesystem, font );
 
-            if ( !state ) 
-                break;
-        }
+        if ( !state )
+            break;
     }
 
     return state;
@@ -95,7 +139,7 @@ bool MicroImFontManager::AddFont(
 ) {
     auto& io = ImGui::GetIO( );
 
-    if ( auto* im_font = io.Fonts->AddFontFromMemoryCompressedTTF( micro_ptr_as( data, void* ), length, size ) )
+    if ( auto* im_font = io.Fonts->AddFontFromMemoryCompressedTTF( micro_cast( data, void* ), length, size ) )
         m_fonts.emplace( alias, im_font );
 
     return io.Fonts->Build( );
@@ -104,29 +148,31 @@ bool MicroImFontManager::AddFont(
 bool MicroImFontManager::CreateFont(
     const std::string& name,
     const float size,
+    const MicroImFontEmbedded& font
+) {
+    return CreateFonts( name, size, 1, micro_ptr( font ) );
+}
+
+bool MicroImFontManager::CreateFonts(
+    const std::string& name,
+    const float size,
+    const std::vector<MicroImFontEmbedded> fonts
+) {
+    const auto font_count = fonts.size( );
+    const auto font_data  = fonts.data( );
+
+    return CreateFonts( name, size, font_count, font_data );
+}
+
+bool MicroImFontManager::CreateFonts(
+    const std::string& name,
+    const float size,
     std::initializer_list<MicroImFontEmbedded> fonts
 ) {
-    auto state = fonts.size( );
+    const auto font_count = fonts.size( );
+    const auto font_data  = fonts.begin( );
 
-    if ( state ) {
-        auto config = ImFontConfig{ };
-        auto& io = ImGui::GetIO( );
-
-        config.MergeMode = true;
-
-        for ( auto& font : fonts ) {
-            ImWchar icons_ranges[] = { font.Min, font.Max, 0 };
-
-            io.Fonts->AddFontFromMemoryCompressedTTF( font.Glyphs, font.Length, size, micro_ptr( config ), icons_ranges );
-        }
-
-        state = io.Fonts->Build( );
-
-        if ( state )
-            m_fonts.emplace( name, ImGui::GetFont( ) );
-    }
-
-    return state;
+    return CreateFonts( name, size, font_count, font_data );
 }
 
 void MicroImFontManager::SetFont( const std::string& name ) {
@@ -134,6 +180,55 @@ void MicroImFontManager::SetFont( const std::string& name ) {
 
     if ( iterator != m_fonts.end( ) )
         ImGui::SetCurrentFont( iterator->second );
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////
+//		===	PRIVATE ===
+////////////////////////////////////////////////////////////////////////////////////////////
+bool MicroImFontManager::LoadFont(
+    const std::string& alias,
+    micro_string font_path,
+    const float font_size
+) {
+    auto& io   = ImGui::GetIO( );
+    auto state = false;
+
+    if ( auto* im_font = io.Fonts->AddFontFromFileTTF( font_path, font_size ) ) {
+        m_fonts.emplace( alias, im_font );
+
+        state = io.Fonts->Build( );
+    }
+
+    return state;
+}
+
+bool MicroImFontManager::CreateFonts(
+    const std::string& name,
+    const float size,
+    const uint32_t font_count,
+    const MicroImFontEmbedded* font_data
+) {
+    auto& io     = ImGui::GetIO( );
+    auto font_id = font_count;
+    auto config  = ImFontConfig{ };
+    auto state   = false;
+
+    config.MergeMode = true;
+
+    while ( font_id-- > 0 ) {
+        const auto& font       = font_data[ font_id ];
+        const ImWchar ranges[] = { font.Min, font.Max, 0 };
+
+        io.Fonts->AddFontFromMemoryCompressedTTF( font.Glyphs, font.Length, size, micro_ptr( config ), ranges );
+    }
+
+    if ( state = io.Fonts->Build( ) ) {
+        auto* im_font = ImGui::GetFont( );
+
+        m_fonts.emplace( name, im_font );
+    }
+
+    return state;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////

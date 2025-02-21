@@ -39,6 +39,7 @@ micro_class MicroWindow final
 
 private:
 	SDL_Window* m_window;
+	SDL_GLContext m_gl_context;
 
 public:
 	MicroWindow( );
@@ -47,7 +48,19 @@ public:
 
 	bool Create( const MicroWindowSpecification& specification );
 
-	micro_implement( bool CreateSurface( 
+	micro_implement( bool CreateGLSurface(
+		const GlwGraphicSpecification& specification
+	) );
+
+	micro_implement( void SetupGLContext(
+		const GlwGraphicSpecification& specification
+	) );
+
+	micro_implement( void SwapGLBuffers( ) );
+
+	micro_implement( void DestroyGLSurface( ) );
+
+	micro_implement( bool CreateVKSurface( 
 		VkInstance& instance, 
 		VkSurfaceKHR& surface 
 	) const );
@@ -65,11 +78,13 @@ public:
 	void Destroy( );
 
 public:
-	micro_implement( void GetExtensions( 
+	micro_implement( void GetVKExtensions( 
 		std::vector<micro_string>& extension_list
 	) const );
 
 	SDL_Window* Get( ) const;
+
+	SDL_GLContext GetGLContext( ) const;
 
 	bool GetIsValid( ) const;
 
@@ -78,6 +93,8 @@ public:
 	uint32_t GetWidth( ) const;
 
 	uint32_t GetHeight( ) const;
+
+	micro_implement( glm::ivec2 GetDimensions( ) const );
 
 	micro_implement( micro_upoint GetVKDimensions( ) const );
 
