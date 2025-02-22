@@ -50,3 +50,4 @@ void MicroInputManager::PollEvent( const SDL_Event& event ) {
 
 void MicroInputManager::Terminate( ) {
 }
+

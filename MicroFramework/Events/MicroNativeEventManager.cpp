@@ -37,11 +37,57 @@
 //		===	PUBLIC ===
 ////////////////////////////////////////////////////////////////////////////////////////////
 MicroNativeEventManager::MicroNativeEventManager( )
-	: MicroManager{ }
+	: MicroManager{ },
+    m_callbacks{ }
 { }
 
 bool MicroNativeEventManager::Create( ) {
 	return true;
+}
+
+void MicroNativeEventManager::Register( 
+    const SDL_EventType type, 
+    EventCallback callback 
+) {
+    if ( m_callbacks.find( type ) == m_callbacks.end( ) ) {
+        const auto pair = std::make_pair( type, std::vector<EventCallback>{ } );
+
+        m_callbacks.emplace( pair );
+    }
+
+    m_callbacks[ type ].emplace_back( callback );
+}
+
+void MicroNativeEventManager::Register(
+    const SDL_EventType type,
+    const std::vector<EventCallback>& callbacks
+) {
+    if ( m_callbacks.find( type ) == m_callbacks.end( ) ) {
+        const auto pair = std::make_pair( type, EventCallbackList{ } );
+
+        m_callbacks.emplace( pair );
+    }
+
+    const auto where = m_callbacks[ type ].end( );
+    const auto first = callbacks.begin( );
+    const auto last  = callbacks.end( );
+
+    m_callbacks[ type ].insert( where, first, last );
+}
+
+void MicroNativeEventManager::Register(
+    const SDL_EventType type,
+    std::initializer_list<EventCallback> callbacks
+) {
+    if ( m_callbacks.find( type ) == m_callbacks.end( ) ) {
+        const auto pair = std::make_pair( type, EventCallbackList{ } );
+
+        m_callbacks.emplace( pair );
+    }
+
+    const auto where = m_callbacks[ type ].end( );
+
+    m_callbacks[ type ].insert( where, callbacks );
 }
 
 bool MicroNativeEventManager::PollEvents(
@@ -50,27 +96,50 @@ bool MicroNativeEventManager::PollEvents(
     auto should_run = true;
     auto sdl_event  = SDL_Event{ };
 
-    while ( SDL_PollEvent( micro_ptr( sdl_event ) ) ) {
-        if (
-            sdl_event.type == SDL_EVENT_WINDOW_CLOSE_REQUESTED ||
-            sdl_event.type == SDL_EVENT_WINDOW_DESTROYED       ||
-            sdl_event.type == SDL_EVENT_QUIT
-        ) {
+    while ( should_run && SDL_PollEvent( micro_ptr( sdl_event ) ) ) {
+        if ( GetShouldClose( sdl_event.type ) )
             should_run = false;
 
-            break;
-        }
-
-        for ( auto* observer : observers ) {
-            if ( observer == nullptr )
-                continue;
-
-            observer->PollEvent( sdl_event );
-        }
+        PollObservers( sdl_event, observers );
+        PollCallback( sdl_event );
     }
 
     return should_run;
 }
 
 void MicroNativeEventManager::Terminate( ) {
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////
+//		===	PRIVATE ===
+////////////////////////////////////////////////////////////////////////////////////////////
+void MicroNativeEventManager::PollObservers( 
+    const SDL_Event& sdl_event,
+    std::initializer_list<MicroNativeEventObserver*> observers 
+) {
+    for ( auto* observer : observers ) {
+        if ( observer == nullptr )
+            continue;
+
+        observer->PollEvent( sdl_event );
+    }
+}
+
+void MicroNativeEventManager::PollCallback( const SDL_Event& sdl_event ) {
+    for ( const auto& callback_pair : m_callbacks ) {
+        if ( callback_pair.first != sdl_event.type )
+            continue;
+
+        for ( auto& callback : callback_pair.second )
+            std::invoke( callback, sdl_event );
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////
+//		===	PRIVATE GET ===
+////////////////////////////////////////////////////////////////////////////////////////////
+bool MicroNativeEventManager::GetShouldClose( const uint32_t event_type ) const {
+    return  event_type == SDL_EVENT_WINDOW_CLOSE_REQUESTED ||
+            event_type == SDL_EVENT_WINDOW_DESTROYED       ||
+            event_type == SDL_EVENT_QUIT;
 }

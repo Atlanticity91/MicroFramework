@@ -35,6 +35,12 @@
 
 micro_class MicroNativeEventManager final : public MicroManager {
 
+	using EventCallback = std::function<void( const SDL_Event& )>;
+	using EventCallbackList = std::vector<EventCallback>;
+
+private:
+	std::map<SDL_EventType, EventCallbackList> m_callbacks;
+
 public:
 	MicroNativeEventManager( );
 
@@ -42,10 +48,33 @@ public:
 
 	micro_implement( bool Create( ) );
 
+	void Register( const SDL_EventType type, EventCallback callback );
+
+	void Register(
+		const SDL_EventType type,
+		const std::vector<EventCallback>& callbacks
+	);
+
+	void Register( 
+		const SDL_EventType type, 
+		std::initializer_list<EventCallback> callbacks 
+	);
+
 	bool PollEvents(
 		std::initializer_list<MicroNativeEventObserver*> observers 
 	);
 
 	micro_implement( void Terminate( ) );
+
+private:
+	void PollObservers( 
+		const SDL_Event& sdl_event,
+		std::initializer_list<MicroNativeEventObserver*> observers
+	);
+
+	void PollCallback( const SDL_Event& sdl_event );
+
+private:
+	bool GetShouldClose( const uint32_t event_type ) const;
 
 };
