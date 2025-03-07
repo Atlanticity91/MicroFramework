@@ -30,3 +30,72 @@
  **/
 
 #pragma once
+
+#include "MicroInputQuery.h"
+
+micro_class MicroInputQueryManager final {
+
+private:
+	uint32_t m_filters;
+	std::map<std::string, MicroInputQuery> m_queries;
+
+public:
+	MicroInputQueryManager( );
+
+	~MicroInputQueryManager( ) = default;
+	
+	void Register( const std::string& name, const MicroInputQuery& query );
+
+	void Register( const std::string& name, MicroInputQuery&& query );
+
+	void Register(
+		const std::string& name,
+		const uint32_t filters,
+		std::initializer_list<MicroInputQueryButton> buttons
+	);
+
+	void Register(
+		const std::string& name,
+		const uint32_t filters,
+		std::initializer_list<MicroInputQueryAxis> axis
+	);
+
+	void Register( 
+		const std::string& name,
+		const uint32_t filters,
+		std::initializer_list<MicroInputQueryButton> buttons,
+		std::initializer_list<MicroInputQueryAxis> axis
+	);
+
+	void Extend(
+		const std::string& name,
+		std::initializer_list<MicroInputQueryButton> buttons
+	);
+
+	void Extend(
+		const std::string& name,
+		std::initializer_list<MicroInputQueryAxis> axis
+	);
+
+	void Extend( 
+		const std::string& name,
+		std::initializer_list<MicroInputQueryButton> buttons,
+		std::initializer_list<MicroInputQueryAxis> axis
+	);
+
+	void Add( const uint32_t filters );
+
+	void Remove( const uint32_t filters );
+
+	void Set( const uint32_t filters );
+
+public:
+	uint32_t GetFilters( ) const;
+
+	bool GetHasFilters( const uint32_t filters ) const;
+	
+	const std::map<std::string, MicroInputQuery>& GetQueries( ) const;
+	
+	const MicroInputQuery* Get( const std::string& name ) const;
+
+};

@@ -1,4 +1,4 @@
-/** 
+/**
  *
  *  __  __ _            ___                                  _
  * |  \/  (_)__ _ _ ___| __| _ __ _ _ __  _____ __ _____ _ _| |__
@@ -31,35 +31,30 @@
 
 #pragma once
 
-#include "MicroInputDevice.h"
+#include "MicroInputQueryAxis.h"
 
-micro_class MicroInputDeviceKeyboard final : public MicroInputDevice {
+micro_struct MicroInputQuery {
 
-private:
-	static constexpr uint32_t BitSize = 8 * micro_sizeof( uint64_t );
-	static constexpr uint32_t Count   = SDL_SCANCODE_COUNT / BitSize;
+	uint32_t Filters;
+	std::vector<MicroInputQueryButton> Buttons;
+	std::vector<MicroInputQueryAxis> Axis;
 
-private:
-	uint64_t m_old_states[ Count ];
-	uint64_t m_new_states[ Count ];
+	MicroInputQuery( );
 
-public:
-	MicroInputDeviceKeyboard( );
+	MicroInputQuery( const MicroInputQuery& other );
 
-	~MicroInputDeviceKeyboard( ) = default;
+	MicroInputQuery( MicroInputQuery&& other ) noexcept;
 
-	micro_implement( void PollEvent( const SDL_Event& sdl_event ) );
+	MicroInputQuery(
+		const uint32_t filters,
+		const std::vector<MicroInputQueryButton>& buttons,
+		const std::vector<MicroInputQueryAxis>& axis
+	);
 
-	micro_implement( void Tick( ) );
-
-public:
-	micro_implement( bool Evaluate( const MicroInputQueryButton& button ) const );
-
-	micro_implement( micro_vec2 EvaluateAxis(
-		const MicroInputQueryAxis& axis
-	) const );
-
-private:
-	bool GetIsDown( const uint64_t* states, const uint32_t scancode ) const;
+	MicroInputQuery(
+		const uint32_t filters,
+		std::vector<MicroInputQueryButton>&& buttons,
+		std::vector<MicroInputQueryAxis>&& axis
+	);
 
 };

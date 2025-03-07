@@ -1,4 +1,4 @@
-/** 
+/**
  *
  *  __  __ _            ___                                  _
  * |  \/  (_)__ _ _ ___| __| _ __ _ _ __  _____ __ _____ _ _| |__
@@ -30,3 +30,41 @@
  **/
 
 #pragma once
+
+#include "__micro_framework_pch.h"
+
+////////////////////////////////////////////////////////////////////////////////////////////
+//		===	PUBLIC ===
+////////////////////////////////////////////////////////////////////////////////////////////
+MicroInputDeviceMouseManager::MicroInputDeviceMouseManager( )
+	: MicroInputDeviceManager{ }
+{ }
+
+void MicroInputDeviceMouseManager::PollEvent( const SDL_Event& sdl_event ) {
+	if ( sdl_event.mdevice.type == SDL_EVENT_MOUSE_ADDED ) {
+		auto device = std::make_pair( sdl_event.mdevice.which, MicroInputDeviceMouse{ } );
+
+		m_devices.emplace( device );
+
+		return;
+	}
+
+	if ( sdl_event.mdevice.type == SDL_EVENT_MOUSE_REMOVED ) {
+		m_devices.erase( sdl_event.mdevice.which );
+
+		return;
+	}
+
+	auto device_id = (uint32_t)0;
+
+	if ( sdl_event.type == SDL_EVENT_MOUSE_MOTION )
+		device_id = sdl_event.motion.which;
+
+	if ( sdl_event.type == SDL_EVENT_MOUSE_BUTTON_DOWN || sdl_event.type == SDL_EVENT_MOUSE_BUTTON_UP )
+		device_id = sdl_event.button.which;
+
+	if ( sdl_event.type == SDL_EVENT_MOUSE_WHEEL )
+		device_id = sdl_event.wheel.which;
+
+	m_devices[ device_id ].PollEvent( sdl_event );
+}

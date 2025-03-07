@@ -31,13 +31,22 @@
 
 #pragma once
 
-#include "../../Time/MicroDeltaTime.h"
+#include "../Queries/MicroInputQueryManager.h"
 
-micro_class MicroInputDevice {
+micro_class MicroInputDevice : public MicroNativeEventObserver {
 
 public:
 	MicroInputDevice( );
 
 	virtual ~MicroInputDevice( ) = default;
+
+	micro_abstract( void Tick( ) );
+
+public:
+	micro_abstract( bool Evaluate( const MicroInputQueryButton& button ) const );
+
+	micro_abstract( micro_vec2 EvaluateAxis(
+		const MicroInputQueryAxis& axis
+	) const );
 
 };

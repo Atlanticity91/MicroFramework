@@ -1,4 +1,4 @@
-/** 
+/**
  *
  *  __  __ _            ___                                  _
  * |  \/  (_)__ _ _ ___| __| _ __ _ _ __  _____ __ _____ _ _| |__
@@ -29,37 +29,45 @@
  *
  **/
 
-#pragma once
+#include "__micro_framework_pch.h"
 
-#include "MicroInputDevice.h"
+////////////////////////////////////////////////////////////////////////////////////////////
+//		===	PUBLIC ===
+////////////////////////////////////////////////////////////////////////////////////////////
+MicroInputQuery::MicroInputQuery( )
+	: Filters{ },
+	Buttons{ },
+	Axis{ }
+{ }
 
-micro_class MicroInputDeviceKeyboard final : public MicroInputDevice {
+MicroInputQuery::MicroInputQuery( const MicroInputQuery& other )
+	: Filters{ other.Filters },
+	Buttons{ other.Buttons },
+	Axis{ other.Axis }
+{ }
 
-private:
-	static constexpr uint32_t BitSize = 8 * micro_sizeof( uint64_t );
-	static constexpr uint32_t Count   = SDL_SCANCODE_COUNT / BitSize;
+MicroInputQuery::MicroInputQuery( MicroInputQuery&& other ) noexcept
+	: Filters{ other.Filters },
+	Buttons{ std::move( other.Buttons ) },
+	Axis{ std::move( other.Axis ) }
+{ }
 
-private:
-	uint64_t m_old_states[ Count ];
-	uint64_t m_new_states[ Count ];
+MicroInputQuery::MicroInputQuery(
+	const uint32_t filters,
+	const std::vector<MicroInputQueryButton>& buttons,
+	const std::vector<MicroInputQueryAxis>& axis
+)
+	: Filters{ filters },
+	Buttons{ buttons },
+	Axis{ axis }
+{ }
 
-public:
-	MicroInputDeviceKeyboard( );
-
-	~MicroInputDeviceKeyboard( ) = default;
-
-	micro_implement( void PollEvent( const SDL_Event& sdl_event ) );
-
-	micro_implement( void Tick( ) );
-
-public:
-	micro_implement( bool Evaluate( const MicroInputQueryButton& button ) const );
-
-	micro_implement( micro_vec2 EvaluateAxis(
-		const MicroInputQueryAxis& axis
-	) const );
-
-private:
-	bool GetIsDown( const uint64_t* states, const uint32_t scancode ) const;
-
-};
+MicroInputQuery::MicroInputQuery(
+	const uint32_t filters,
+	std::vector<MicroInputQueryButton>&& buttons,
+	std::vector<MicroInputQueryAxis>&& axis
+)
+	: Filters{ filters },
+	Buttons{ std::move( buttons ) },
+	Axis{ std::move( axis ) }
+{ }

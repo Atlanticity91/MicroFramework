@@ -31,16 +31,9 @@
 
 #pragma once
 
-#include "Tools/MicroRenderDoc.h"
+#include "Camera/MicroCameraManager.h"
 
 struct MicroTexture { };
-struct MicroColor { 
-
-	uint8_t* Get( ) const {
-		return nullptr;
-	};
-
-};
 
 micro_class MicroGraphicManager final : public MicroNativeEventObserver {
 

@@ -1,4 +1,4 @@
-/** 
+/**
  *
  *  __  __ _            ___                                  _
  * |  \/  (_)__ _ _ ___| __| _ __ _ _ __  _____ __ _____ _ _| |__
@@ -7,7 +7,7 @@
  *
  * MIT License
  *
- * Copyright (c) 2024- Alves Quentin
+ * Copyright (c) 2024 Alves Quentin
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,35 +31,7 @@
 
 #pragma once
 
-#include "MicroInputDevice.h"
+#include "MicroImExtension.h"
 
-micro_class MicroInputDeviceKeyboard final : public MicroInputDevice {
-
-private:
-	static constexpr uint32_t BitSize = 8 * micro_sizeof( uint64_t );
-	static constexpr uint32_t Count   = SDL_SCANCODE_COUNT / BitSize;
-
-private:
-	uint64_t m_old_states[ Count ];
-	uint64_t m_new_states[ Count ];
-
-public:
-	MicroInputDeviceKeyboard( );
-
-	~MicroInputDeviceKeyboard( ) = default;
-
-	micro_implement( void PollEvent( const SDL_Event& sdl_event ) );
-
-	micro_implement( void Tick( ) );
-
-public:
-	micro_implement( bool Evaluate( const MicroInputQueryButton& button ) const );
-
-	micro_implement( micro_vec2 EvaluateAxis(
-		const MicroInputQueryAxis& axis
-	) const );
-
-private:
-	bool GetIsDown( const uint64_t* states, const uint32_t scancode ) const;
-
+namespace micro_im {
 };

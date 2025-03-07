@@ -1,4 +1,4 @@
-/** 
+/**
  *
  *  __  __ _            ___                                  _
  * |  \/  (_)__ _ _ ___| __| _ __ _ _ __  _____ __ _____ _ _| |__
@@ -31,35 +31,44 @@
 
 #pragma once
 
-#include "MicroInputDevice.h"
+#include "__micro_framework_pch.h"
 
-micro_class MicroInputDeviceKeyboard final : public MicroInputDevice {
+////////////////////////////////////////////////////////////////////////////////////////////
+//		===	PUBLIC ===
+////////////////////////////////////////////////////////////////////////////////////////////
+MicroInputDeviceGamepadManager::MicroInputDeviceGamepadManager( )
+	: MicroInputDeviceManager{ }
+{ }
 
-private:
-	static constexpr uint32_t BitSize = 8 * micro_sizeof( uint64_t );
-	static constexpr uint32_t Count   = SDL_SCANCODE_COUNT / BitSize;
+void MicroInputDeviceGamepadManager::PollEvent( const SDL_Event& sdl_event ) {
+	if ( sdl_event.type == SDL_EVENT_GAMEPAD_ADDED || sdl_event.type == SDL_EVENT_GAMEPAD_REMAPPED ) {
+		auto device = std::make_pair( sdl_event.gdevice.which, MicroInputDeviceGamepad{ } );
 
-private:
-	uint64_t m_old_states[ Count ];
-	uint64_t m_new_states[ Count ];
+		m_devices.emplace( device );
 
-public:
-	MicroInputDeviceKeyboard( );
+		return;
+	}
 
-	~MicroInputDeviceKeyboard( ) = default;
+	if ( sdl_event.type == SDL_EVENT_GAMEPAD_REMOVED ) {
+		m_devices.erase( sdl_event.gdevice.which );
 
-	micro_implement( void PollEvent( const SDL_Event& sdl_event ) );
+		return;
+	}
 
-	micro_implement( void Tick( ) );
+	auto device_id = (uint32_t)0;
 
-public:
-	micro_implement( bool Evaluate( const MicroInputQueryButton& button ) const );
+	switch ( sdl_event.type ) {
+		case SDL_EVENT_GAMEPAD_AXIS_MOTION   : device_id = sdl_event.gaxis.which; break;
+		case SDL_EVENT_GAMEPAD_SENSOR_UPDATE : device_id = sdl_event.gsensor.which; break;
 
-	micro_implement( micro_vec2 EvaluateAxis(
-		const MicroInputQueryAxis& axis
-	) const );
+		case SDL_EVENT_GAMEPAD_BUTTON_DOWN :
+		case SDL_EVENT_GAMEPAD_BUTTON_UP   : device_id = sdl_event.gbutton.which; break;
 
-private:
-	bool GetIsDown( const uint64_t* states, const uint32_t scancode ) const;
+		case SDL_EVENT_GAMEPAD_TOUCHPAD_DOWN   : 
+		case SDL_EVENT_GAMEPAD_TOUCHPAD_MOTION : device_id = sdl_event.gtouchpad.which; break;
 
-};
+		default : break;
+	}
+
+	m_devices[ device_id ].PollEvent( sdl_event );
+}

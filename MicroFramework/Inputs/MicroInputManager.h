@@ -1,9 +1,9 @@
 /** 
  *
- *  __  __ _            ___                                  _   
+ *  __  __ _            ___                                  _
  * |  \/  (_)__ _ _ ___| __| _ __ _ _ __  _____ __ _____ _ _| |__
  * | |\/| | / _| '_/ _ \ _| '_/ _` | '  \/ -_) V  V / _ \ '_| / /
- * |_|  |_|_\__|_| \___/_||_| \__,_|_|_|_\___|\_/\_/\___/_| |_\_\                                                            
+ * |_|  |_|_\__|_| \___/_||_| \__,_|_|_|_\___|\_/\_/\___/_| |_\_\
  *
  * MIT License
  *
@@ -31,11 +31,15 @@
 
 #pragma once
 
-#include "../Time/MicroDeltaTime.h"
+#include "MicroInputDeviceDispatcher.h"
 
 micro_class MicroInputManager final 
 	: public MicroManager, public MicroNativeEventObserver
 {
+
+private:
+	MicroInputDeviceDispatcher m_devices;
+	MicroInputQueryManager m_queries;
 
 public:
 	MicroInputManager( );
@@ -44,8 +48,35 @@ public:
 
 	micro_implement( bool Create( ) );
 
-	micro_implement( void PollEvent( const SDL_Event& event ) );
+	micro_implement( void PollEvent( const SDL_Event& sdl_event ) );
+
+	void Tick( );
 
 	micro_implement( void Terminate( ) );
+
+public:
+	MicroInputDevice* GetDevice( 
+		const MicroInputDeviceTypes type, 
+		const uint32_t witch
+	) const;
+
+	bool Evaluate( const std::string& name ) const;
+
+	micro_vec2 EvaluateAxis( const std::string& name ) const;
+
+	bool Evaluate( const std::string& name, const uint32_t witch ) const;
+
+	micro_vec2 EvaluateAxis( const std::string& name, const uint32_t witch ) const;
+
+	bool Evaluate( const MicroInputQueryButton& button ) const;
+
+	micro_vec2 EvaluateAxis( const MicroInputQueryAxis& axis ) const;
+
+	bool Evaluate( const MicroInputQueryButton& button, const uint32_t witch ) const;
+
+	micro_vec2 EvaluateAxis( 
+		const MicroInputQueryAxis& axis, 
+		const uint32_t witch
+	) const;
 
 };

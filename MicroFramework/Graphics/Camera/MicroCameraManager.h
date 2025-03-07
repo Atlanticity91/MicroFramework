@@ -1,4 +1,4 @@
-/** 
+/**
  *
  *  __  __ _            ___                                  _
  * |  \/  (_)__ _ _ ___| __| _ __ _ _ __  _____ __ _____ _ _| |__
@@ -30,3 +30,14 @@
  **/
 
 #pragma once
+
+#include "MicroCamera.h"
+
+micro_class MicroCameraManager final {
+
+public:
+	MicroCameraManager( );
+
+	~MicroCameraManager( ) = default;
+
+};

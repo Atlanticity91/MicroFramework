@@ -1,4 +1,4 @@
-/** 
+/**
  *
  *  __  __ _            ___                                  _
  * |  \/  (_)__ _ _ ___| __| _ __ _ _ __  _____ __ _____ _ _| |__
@@ -29,4 +29,28 @@
  *
  **/
 
-#pragma once
+#include "__micro_framework_pch.h"
+
+////////////////////////////////////////////////////////////////////////////////////////////
+//		===	PUBLIC ===
+////////////////////////////////////////////////////////////////////////////////////////////
+MicroInputDeviceGamepad::MicroInputDeviceGamepad( )
+	: MicroInputDevice{ }
+{ }
+
+void MicroInputDeviceGamepad::PollEvent( const SDL_Event& sdl_event ) {
+}
+
+void MicroInputDeviceGamepad::Tick( ) { 
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////
+//		===	PUBLIC GET ===
+////////////////////////////////////////////////////////////////////////////////////////////
+bool MicroInputDeviceGamepad::Evaluate( const MicroInputQueryButton& button ) const {
+	return false;
+}
+
+micro_vec2 MicroInputDeviceGamepad::EvaluateAxis( const MicroInputQueryAxis& axis ) const {
+	return { };
+}

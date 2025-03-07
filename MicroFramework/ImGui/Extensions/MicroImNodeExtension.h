@@ -32,3 +32,6 @@
 #pragma once
 
 #include "MicroImKnobExtension.h"
+
+namespace micro_im { 
+};

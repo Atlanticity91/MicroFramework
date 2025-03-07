@@ -1,4 +1,4 @@
-/** 
+/**
  *
  *  __  __ _            ___                                  _
  * |  \/  (_)__ _ _ ___| __| _ __ _ _ __  _____ __ _____ _ _| |__
@@ -31,35 +31,78 @@
 
 #pragma once
 
-#include "MicroInputDevice.h"
+#include "../Memory/MicroMemoryManager.h"
 
-micro_class MicroInputDeviceKeyboard final : public MicroInputDevice {
-
-private:
-	static constexpr uint32_t BitSize = 8 * micro_sizeof( uint64_t );
-	static constexpr uint32_t Count   = SDL_SCANCODE_COUNT / BitSize;
+template<typename Type>
+class micro_stack final {
 
 private:
-	uint64_t m_old_states[ Count ];
-	uint64_t m_new_states[ Count ];
+	std::vector<Type> m_values;
 
 public:
-	MicroInputDeviceKeyboard( );
+	constexpr micro_stack( )
+		: m_values{ }
+	{ };
 
-	~MicroInputDeviceKeyboard( ) = default;
+	constexpr micro_stack( const micro_stack& other )
+		: m_values{ other.m_values }
+	{ };
 
-	micro_implement( void PollEvent( const SDL_Event& sdl_event ) );
+	constexpr micro_stack( micro_stack&& other ) noexcept
+		: m_values{ std::move( other.m_values ) }
+	{ };
 
-	micro_implement( void Tick( ) );
+	~micro_stack( ) = default;
+
+	constexpr void push( const Type& element ) {
+		m_values.push_back( element );
+	};
+
+	constexpr void push( Type&& element ) {
+		m_values.push_back( std::move( element ) );
+	};
+
+	constexpr void clear( ) {
+		m_values.clear( );
+	};
 
 public:
-	micro_implement( bool Evaluate( const MicroInputQueryButton& button ) const );
+	template<typename... Args>
+	constexpr void emplace( Args&&... args ) {
+		push( { std::forward<Args>( args )... } );
+	};
 
-	micro_implement( micro_vec2 EvaluateAxis(
-		const MicroInputQueryAxis& axis
-	) const );
+public:
+	constexpr uint32_t size( ) const {
+		return (uint32_t)m_values.size( );
+	};
 
-private:
-	bool GetIsDown( const uint64_t* states, const uint32_t scancode ) const;
+	constexpr bool empty( ) const {
+		return m_values.empty( );
+	};
+
+	micro_nodiscard_cause( "Returned boolean give information on pop operation success." )
+	constexpr std::optional<Type> pop( ) {
+		if ( !empty( ) ) {
+			auto local = std::move( m_values.back( ) );
+			
+			m_values.pop_back( );
+
+			return local;
+		}
+
+		return { };
+	};
+
+	micro_nodiscard_cause( "Returned boolean give information on peek operation success." )
+	constexpr std::optional<Type> peek( ) {
+		if ( !empty( ) ) {
+			auto local = std::move( m_values.back( ) );
+
+			return local;
+		}
+
+		return { };
+	};
 
 };

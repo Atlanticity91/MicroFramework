@@ -1,4 +1,4 @@
-/** 
+/**
  *
  *  __  __ _            ___                                  _
  * |  \/  (_)__ _ _ ___| __| _ __ _ _ __  _____ __ _____ _ _| |__
@@ -31,35 +31,24 @@
 
 #pragma once
 
-#include "MicroInputDevice.h"
+#include "MicroInputQueryButton.h"
 
-micro_class MicroInputDeviceKeyboard final : public MicroInputDevice {
+micro_struct MicroInputQueryAxis {
 
-private:
-	static constexpr uint32_t BitSize = 8 * micro_sizeof( uint64_t );
-	static constexpr uint32_t Count   = SDL_SCANCODE_COUNT / BitSize;
+	MicroInputDeviceTypes Type;
+	uint32_t Key;
+	uint32_t Modifier;
 
-private:
-	uint64_t m_old_states[ Count ];
-	uint64_t m_new_states[ Count ];
+	MicroInputQueryAxis( );
 
-public:
-	MicroInputDeviceKeyboard( );
+	MicroInputQueryAxis( const MicroInputQueryAxis& other );
 
-	~MicroInputDeviceKeyboard( ) = default;
+	MicroInputQueryAxis( MicroInputQueryAxis&& other ) noexcept;
 
-	micro_implement( void PollEvent( const SDL_Event& sdl_event ) );
-
-	micro_implement( void Tick( ) );
-
-public:
-	micro_implement( bool Evaluate( const MicroInputQueryButton& button ) const );
-
-	micro_implement( micro_vec2 EvaluateAxis(
-		const MicroInputQueryAxis& axis
-	) const );
-
-private:
-	bool GetIsDown( const uint64_t* states, const uint32_t scancode ) const;
+	MicroInputQueryAxis(
+		const MicroInputDeviceTypes type,
+		const uint32_t key,
+		const uint32_t modifier
+	);
 
 };

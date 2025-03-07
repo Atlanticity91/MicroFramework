@@ -1,9 +1,9 @@
 /** 
  *
- *  __  __ _            ___                                  _   
+ *  __  __ _            ___                                  _
  * |  \/  (_)__ _ _ ___| __| _ __ _ _ __  _____ __ _____ _ _| |__
  * | |\/| | / _| '_/ _ \ _| '_/ _` | '  \/ -_) V  V / _ \ '_| / /
- * |_|  |_|_\__|_| \___/_||_| \__,_|_|_|_\___|\_/\_/\___/_| |_\_\                                                            
+ * |_|  |_|_\__|_| \___/_||_| \__,_|_|_|_\___|\_/\_/\___/_| |_\_\
  *
  * MIT License
  *
@@ -38,16 +38,113 @@
 ////////////////////////////////////////////////////////////////////////////////////////////
 MicroInputManager::MicroInputManager( )
 	: MicroManager{ },
-	MicroNativeEventObserver{ }
+	MicroNativeEventObserver{ },
+	m_devices{ },
+	m_queries{ }
 { }
 
 bool MicroInputManager::Create( ) {
-	return false;
+	return true;
 }
 
-void MicroInputManager::PollEvent( const SDL_Event& event ) {
+void MicroInputManager::PollEvent( const SDL_Event& sdl_event ) {
+	m_devices.PollEvent( sdl_event );
+}
+
+void MicroInputManager::Tick( ) {
+	m_devices.Tick( );
 }
 
 void MicroInputManager::Terminate( ) {
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////
+//		===	PUBLIC GET ===
+////////////////////////////////////////////////////////////////////////////////////////////
+MicroInputDevice* MicroInputManager::GetDevice( 
+	const MicroInputDeviceTypes type,
+	const uint32_t witch
+) const {
+	return m_devices.Get( type, witch );
+}
+
+bool MicroInputManager::Evaluate( const std::string& name ) const {
+	auto state = false;
+
+	if ( const auto* query = m_queries.Get( name ) ) {
+		for ( const auto& button : query->Buttons ) {
+			if ( state = m_devices.Evaluate( button ) )
+				break;
+		}
+	}
+
+	return state;
+}
+
+micro_vec2 MicroInputManager::EvaluateAxis( const std::string& name ) const {
+	auto result = micro_vec2{ };
+
+	if ( const auto* query = m_queries.Get( name ) ) {
+		for ( const auto& axis : query->Axis ) {
+			result = m_devices.EvaluateAxis( axis );
+
+			if ( result != 0.f )
+				break;
+		}
+	}
+
+	return result;
+}
+
+bool MicroInputManager::Evaluate( const std::string& name, const uint32_t witch ) const {
+	auto state = false;
+
+	if ( const auto* query = m_queries.Get( name ) ) {
+		for ( const auto& button : query->Buttons ) {
+			if ( state = m_devices.Evaluate( button, witch ) )
+				break;
+		}
+	}
+
+	return state;
+}
+
+micro_vec2 MicroInputManager::EvaluateAxis(
+	const std::string& name,
+	const uint32_t witch
+) const {
+	auto result = micro_vec2{ };
+
+	if ( const auto* query = m_queries.Get( name ) ) {
+		for ( const auto& axis : query->Axis ) {
+			result = m_devices.EvaluateAxis( axis, witch );
+
+			if ( result != 0.f )
+				break;
+		}
+	}
+
+	return result;
+}
+
+bool MicroInputManager::Evaluate( const MicroInputQueryButton& button ) const {
+	return m_devices.Evaluate( button );
+}
+
+micro_vec2 MicroInputManager::EvaluateAxis( const MicroInputQueryAxis& axis ) const {
+	return m_devices.EvaluateAxis( axis );
+}
+
+bool MicroInputManager::Evaluate( 
+	const MicroInputQueryButton& button, 
+	const uint32_t witch 
+) const {
+	return m_devices.Evaluate( button, witch );
+}
+
+micro_vec2 MicroInputManager::EvaluateAxis(
+	const MicroInputQueryAxis& axis,
+	const uint32_t witch
+) const {
+	return m_devices.EvaluateAxis( axis, witch );
+}

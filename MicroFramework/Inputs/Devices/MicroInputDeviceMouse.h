@@ -35,9 +35,33 @@
 
 micro_class MicroInputDeviceMouse final : public MicroInputDevice {
 
+private:
+	uint8_t m_old_states;
+	uint8_t m_new_states;
+	glm::vec2 m_position;
+	glm::vec2 m_wheel;
+
 public:
 	MicroInputDeviceMouse( );
 
 	~MicroInputDeviceMouse( ) = default;
+
+	micro_implement( void PollEvent( const SDL_Event& sdl_event ) );
+
+	micro_implement( void Tick( ) );
+
+public:
+	micro_implement( bool Evaluate( const MicroInputQueryButton& button ) const );
+
+	micro_implement( micro_vec2 EvaluateAxis(
+		const MicroInputQueryAxis& axis
+	) const );
+
+	const micro_vec2 GetPosition( ) const;
+
+	const micro_vec2 GetWheel( ) const;
+
+private:
+	bool GetIsDown( const uint8_t states, const uint32_t button ) const;
 
 };

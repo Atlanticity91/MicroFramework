@@ -40,4 +40,15 @@ public:
 
 	~MicroInputDeviceGamepad( ) = default;
 
+	micro_implement( void PollEvent( const SDL_Event& sdl_event ) );
+
+	micro_implement( void Tick( ) );
+
+public:
+	micro_implement( bool Evaluate( const MicroInputQueryButton& button ) const );
+
+	micro_implement( micro_vec2 EvaluateAxis(
+		const MicroInputQueryAxis& axis
+	) const );
+
 };
