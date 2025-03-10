@@ -33,16 +33,14 @@
 
 #include "../Queries/MicroInputQueryManager.h"
 
-micro_class MicroInputDevice : public MicroNativeEventObserver {
+micro_interface MicroInputDevice : public MicroNativeEventObserver {
 
-public:
-	MicroInputDevice( );
+	MicroInputDevice( ) = default;
 
 	virtual ~MicroInputDevice( ) = default;
 
 	micro_abstract( void Tick( ) );
 
-public:
 	micro_abstract( bool Evaluate( const MicroInputQueryButton& button ) const );
 
 	micro_abstract( micro_vec2 EvaluateAxis(

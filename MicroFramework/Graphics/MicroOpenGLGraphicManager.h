@@ -31,62 +31,48 @@
 
 #pragma once
 
-#include "Camera/MicroCameraManager.h"
+#include "MicroGraphicManager.h"
 
-struct MicroTexture { };
+micro_class MicroOpenGLGraphicManager final 
+	: public MicroGraphicManager<MicroOpenGLSpecification> 
+{
 
-template<typename GraphicSpecification>
-class MicroGraphicManager : public MicroNativeEventObserver {
-
-protected:
-	bool m_should_resize;
-	bool m_should_render;
-
+private:
+	MicroOpenGL m_opengl;
+	MicroOpenGLRenderContext m_render_context;
+	
 public:
-	MicroGraphicManager( )
-		: m_should_resize{ false },
-		m_should_render{ true }
-	{ };
+	MicroOpenGLGraphicManager( );
 
-	virtual ~MicroGraphicManager( ) = default;
+	~MicroOpenGLGraphicManager( ) = default;
 
-	micro_abstract( bool Create( 
-		MicroWindow& window, 
-		const GraphicSpecification& specification 
+	micro_implement( bool Create( 
+		MicroWindow& window,
+		const MicroOpenGLSpecification& specification
 	) );
 
-	micro_implement( void PollEvent( const SDL_Event& event ) ) {
-		if ( event.type == SDL_EVENT_WINDOW_RESTORED )
-			m_should_render = true;
+	micro_implement( bool Acquire( const MicroWindow& window ) );
 
-		if ( event.type == SDL_EVENT_WINDOW_MINIMIZED || event.type == SDL_EVENT_WINDOW_HIDDEN )
-			m_should_render = false;
+	micro_implement( void Present( const MicroWindow& window ) );
 
-		if (
-			event.type == SDL_EVENT_WINDOW_ENTER_FULLSCREEN ||
-			event.type == SDL_EVENT_WINDOW_LEAVE_FULLSCREEN ||
-			event.type == SDL_EVENT_WINDOW_PIXEL_SIZE_CHANGED
-		)
-			MarkResize( );
-	};
-
-	void MarkResize( ) {
-		m_should_resize = true;
-	};
-
-	micro_abstract( bool Acquire( const MicroWindow& window ) );
-
-	micro_abstract( void Present( const MicroWindow& window ) );
-
-	micro_abstract( void Destroy( MicroWindow& window ) );
+	micro_implement( void Destroy( MicroWindow& window ) );
 
 public:
-	bool GetShouldResize( ) const { 
-		return m_should_resize;
-	};
+	MicroOpenGL& GetOpenGL( );
 
-	bool GetShouldRender( ) const { 
-		return m_should_render;
-	};
+	const MicroOpenGL& GetOpenGL( ) const;
+	
+	MicroOpenGLRenderContext& GetRenderContext( );
+	
+	const MicroOpenGLRenderContext& GetRenderContext( ) const;
+
+public:
+	operator MicroOpenGL& ( );
+
+	operator const MicroOpenGL& ( ) const;
+
+	operator MicroOpenGLRenderContext& ( );
+
+	operator const MicroOpenGLRenderContext& ( ) const;
 
 };

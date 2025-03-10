@@ -44,6 +44,46 @@ MicroImManager::MicroImManager( )
 	m_windows{ }
 { }
 
+bool MicroImManager::Create( 
+	const MicroWindow& window, 
+	const MicroImSpecification& specification,
+	MicroVulkan& graphics
+) {
+	auto result = false;
+
+	if ( m_context.Create( ) ) {
+		if ( m_backend = new MicroImVKBackend{ } ) {
+			if ( result = m_backend->Create( window, specification, micro_ptr_as( graphics, void* ) ) ) {
+				m_theme.Initialize( );
+				m_fonts.Initialize( );
+			}
+		} else
+			m_context.Destroy( );
+	}
+
+	return result;
+}
+
+bool MicroImManager::Create(
+	const MicroWindow& window,
+	const MicroImSpecification& specification,
+	MicroOpenGL& graphics
+) {
+	auto result = false;
+
+	if ( m_context.Create( ) ) {
+		if ( m_backend = new MicroImGLBackend{ } ) {
+			if ( result = m_backend->Create( window, specification, micro_ptr_as( graphics, void* ) ) ) {
+				m_theme.Initialize( );
+				m_fonts.Initialize( );
+			}
+		} else
+			m_context.Destroy( );
+	}
+
+	return result;
+}
+
 void MicroImManager::PollEvent( const SDL_Event& event ) {
 	ImGui_ImplSDL3_ProcessEvent( micro_ptr( event ) );
 }

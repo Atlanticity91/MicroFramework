@@ -36,68 +36,71 @@
 ////////////////////////////////////////////////////////////////////////////////////////////
 //		===	PUBLIC ===
 ////////////////////////////////////////////////////////////////////////////////////////////
-MicroGraphicManager::MicroGraphicManager( )
-	: MicroNativeEventObserver{ },
+MicroVulkanGraphicManager::MicroVulkanGraphicManager( )
+	: MicroGraphicManager{ },
 	m_vulkan{ },
-	m_render_context{ },
-	m_should_resize{ false },
-	m_should_render{ true }
+	m_render_context{ }
 { }
 
-bool MicroGraphicManager::Create( MicroWindow& window ) {
-	return m_vulkan.Create( window, { } );
+bool MicroVulkanGraphicManager::Create(
+	MicroWindow& window, 
+	const MicroVulkanSpecification& specification 
+) {
+	return m_vulkan.Create( window, specification );
 }
 
-void MicroGraphicManager::PollEvent( const SDL_Event& event ) {
-	if ( event.type == SDL_EVENT_WINDOW_RESTORED )
-		m_should_render = true;
-
-	if ( event.type == SDL_EVENT_WINDOW_MINIMIZED || event.type == SDL_EVENT_WINDOW_HIDDEN )
-		m_should_render = false;
-
-    if (
-		event.type == SDL_EVENT_WINDOW_ENTER_FULLSCREEN || 
-		event.type == SDL_EVENT_WINDOW_LEAVE_FULLSCREEN ||
-		event.type == SDL_EVENT_WINDOW_PIXEL_SIZE_CHANGED 
-	)
-		MarkResize( );
-}
-
-void MicroGraphicManager::MarkResize( ) {
-	m_should_resize = true;
-}
-
-bool MicroGraphicManager::Acquire( const MicroWindow& window ) {
+bool MicroVulkanGraphicManager::Acquire( const MicroWindow& window ) {
 	return m_should_render && m_vulkan.Acquire( window, m_render_context, m_should_resize );
 }
 
-void MicroGraphicManager::Present( const MicroWindow& window ) {
+MicroVulkanRenderPassInfo MicroVulkanGraphicManager::AcquireRenderPass(
+	const uint32_t render_pass 
+) {
+	return m_vulkan.AcquireRenderPass( m_render_context, render_pass );
+}
+
+void MicroVulkanGraphicManager::Submit( ) {
+	m_vulkan.Submit( m_render_context );
+}
+
+void MicroVulkanGraphicManager::Present( const MicroWindow& window ) {
 	m_vulkan.Present( window, m_render_context, m_should_resize );
 }
 
-void MicroGraphicManager::Destroy( ) {
+void MicroVulkanGraphicManager::Destroy( MicroWindow& window ) {
 	m_vulkan.Destroy( );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 //		===	PUBLIC GET ===
 ////////////////////////////////////////////////////////////////////////////////////////////
-MicroVulkan MicroGraphicManager::GetVulkan( ) { 
+MicroVulkan& MicroVulkanGraphicManager::GetVulkan( ) {
 	return m_vulkan;
 }
 
-const MicroVulkan& MicroGraphicManager::GetVulkan( ) const {
+const MicroVulkan& MicroVulkanGraphicManager::GetVulkan( ) const {
 	return m_vulkan;
 }
 
-MicroVulkanRenderContext& MicroGraphicManager::GetRenderContext( ) {
+MicroVulkanRenderContext& MicroVulkanGraphicManager::GetRenderContext( ) {
 	return m_render_context;
 }
 
-bool MicroGraphicManager::GetShouldResize( ) const {
-	return m_should_resize;
+const MicroVulkanDevice& MicroVulkanGraphicManager::GetDevice( ) const {
+	return m_vulkan.GetDevice( );
 }
 
-bool MicroGraphicManager::GetShouldRender( ) const {
-	return m_should_render;
+////////////////////////////////////////////////////////////////////////////////////////////
+//		===	OPERATOR ===
+////////////////////////////////////////////////////////////////////////////////////////////
+MicroVulkanGraphicManager::operator MicroVulkan& ( ) {
+	return GetVulkan( );
+}
+
+MicroVulkanGraphicManager::operator const MicroVulkan& ( ) const {
+	return GetVulkan( );
+}
+
+MicroVulkanGraphicManager::operator MicroVulkanRenderContext& ( ) {
+	return GetRenderContext( );
 }

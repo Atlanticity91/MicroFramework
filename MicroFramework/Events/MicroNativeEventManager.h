@@ -35,7 +35,7 @@
 
 micro_class MicroNativeEventManager final : public MicroManager {
 
-	using EventCallback = std::function<void( const SDL_Event& )>;
+	using EventCallback		= std::function<void( const SDL_Event& )>;
 	using EventCallbackList = std::vector<EventCallback>;
 
 private:

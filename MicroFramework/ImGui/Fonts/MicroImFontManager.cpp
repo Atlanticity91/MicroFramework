@@ -158,7 +158,7 @@ bool MicroImFontManager::CreateFonts(
     const float size,
     const std::vector<MicroImFontEmbedded> fonts
 ) {
-    const auto font_count = fonts.size( );
+    const auto font_count = (uint32_t)fonts.size( );
     const auto font_data  = fonts.data( );
 
     return CreateFonts( name, size, font_count, font_data );
@@ -169,7 +169,7 @@ bool MicroImFontManager::CreateFonts(
     const float size,
     std::initializer_list<MicroImFontEmbedded> fonts
 ) {
-    const auto font_count = fonts.size( );
+    const auto font_count = (uint32_t)fonts.size( );
     const auto font_data  = fonts.begin( );
 
     return CreateFonts( name, size, font_count, font_data );

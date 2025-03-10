@@ -7,7 +7,7 @@
 ]]--
 newoption {
 	trigger = 'vk_version',
-	value = '1.3.296.0',
+	value = '1.4.304.1',
 	description = 'Set query minimal Vulkan SDK version'
 }
 

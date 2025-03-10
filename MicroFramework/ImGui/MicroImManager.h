@@ -48,6 +48,18 @@ public:
 
 	~MicroImManager( ) = default;
 
+	bool Create( 
+		const MicroWindow& window, 
+		const MicroImSpecification& specification,
+		MicroVulkan& graphics
+	);
+
+	bool Create(
+		const MicroWindow& window,
+		const MicroImSpecification& specification,
+		MicroOpenGL& graphics
+	);
+
 	micro_implement( void PollEvent( const SDL_Event& event ) );
 
 	MicroImTheme& SetTheme( ImGuiStyleVar variable, const float value );
@@ -136,33 +148,6 @@ public:
 	void Destroy( MicroOpenGL& graphics, void* user_data );
 
 public:
-	template<typename GraphicsAPI>
-		requires ( std::is_same_v<GraphicsAPI, MicroOpenGL> || std::is_same_v<GraphicsAPI, MicroVulkan> )
-	bool Create(
-		const MicroWindow& window,
-		const MicroImSpecification& specification,
-		GraphicsAPI& graphics
-	) {
-		auto result = false;
-
-		if ( m_context.Create( ) ) {
-			micro_compile_if( std::is_same_v<GraphicsAPI, MicroOpenGL> )
-				m_backend = new MicroImGLBackend{ };
-			micro_compile_elif( std::is_same_v<GraphicsAPI, MicroVulkan> )
-				m_backend = new MicroImVKBackend{ };
-
-			if ( m_backend != nullptr ) {
-				if ( result = m_backend->Create( window, specification, micro_ptr_as( graphics, void* ) ) ) {
-					m_theme.Initialize( );
-					m_fonts.Initialize( );
-				}
-			} else
-				m_context.Destroy( );
-		}
-
-		return result;
-	};
-
 	template<typename Window, typename... Args>
 		requires ( std::is_base_of_v<MicroImWindow, Window> )
 	void CreateImWindow( void* user_data, Args&&... args ) { 

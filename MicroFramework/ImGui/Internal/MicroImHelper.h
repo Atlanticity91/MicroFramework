@@ -31,7 +31,7 @@
 
 #pragma once
 
-#include "../../Graphics/MicroGraphicManager.h"
+#include "../../Graphics/MicroVulkanGraphicManager.h"
 
 #define micro_imgui_no_label "##micro_imgui_no_label"
 #define micro_imgui_scope_id( ... )\

@@ -31,62 +31,50 @@
 
 #pragma once
 
-#include "Camera/MicroCameraManager.h"
+#include "MicroOpenGLGraphicManager.h"
 
-struct MicroTexture { };
+micro_class MicroVulkanGraphicManager final 
+	: public MicroGraphicManager<MicroVulkanSpecification>
+{
 
-template<typename GraphicSpecification>
-class MicroGraphicManager : public MicroNativeEventObserver {
-
-protected:
-	bool m_should_resize;
-	bool m_should_render;
-
+private:
+	MicroVulkan m_vulkan;
+	MicroVulkanRenderContext m_render_context;
+	
 public:
-	MicroGraphicManager( )
-		: m_should_resize{ false },
-		m_should_render{ true }
-	{ };
+	MicroVulkanGraphicManager( );
 
-	virtual ~MicroGraphicManager( ) = default;
+	~MicroVulkanGraphicManager( ) = default;
 
-	micro_abstract( bool Create( 
-		MicroWindow& window, 
-		const GraphicSpecification& specification 
+	micro_implement( bool Create( 
+		MicroWindow& window,
+		const MicroVulkanSpecification& specification
 	) );
 
-	micro_implement( void PollEvent( const SDL_Event& event ) ) {
-		if ( event.type == SDL_EVENT_WINDOW_RESTORED )
-			m_should_render = true;
+	micro_implement( bool Acquire( const MicroWindow& window ) );
 
-		if ( event.type == SDL_EVENT_WINDOW_MINIMIZED || event.type == SDL_EVENT_WINDOW_HIDDEN )
-			m_should_render = false;
+	MicroVulkanRenderPassInfo AcquireRenderPass( const uint32_t render_pass );
 
-		if (
-			event.type == SDL_EVENT_WINDOW_ENTER_FULLSCREEN ||
-			event.type == SDL_EVENT_WINDOW_LEAVE_FULLSCREEN ||
-			event.type == SDL_EVENT_WINDOW_PIXEL_SIZE_CHANGED
-		)
-			MarkResize( );
-	};
+	void Submit( );
 
-	void MarkResize( ) {
-		m_should_resize = true;
-	};
+	micro_implement( void Present( const MicroWindow& window ) ); 
 
-	micro_abstract( bool Acquire( const MicroWindow& window ) );
-
-	micro_abstract( void Present( const MicroWindow& window ) );
-
-	micro_abstract( void Destroy( MicroWindow& window ) );
+	micro_implement( void Destroy( MicroWindow& window ) );
 
 public:
-	bool GetShouldResize( ) const { 
-		return m_should_resize;
-	};
+	MicroVulkan& GetVulkan( );
 
-	bool GetShouldRender( ) const { 
-		return m_should_render;
-	};
+	const MicroVulkan& GetVulkan( ) const;
+	
+	MicroVulkanRenderContext& GetRenderContext( );
+	
+	const MicroVulkanDevice& GetDevice( ) const;
+
+public:
+	operator MicroVulkan& ( );
+
+	operator const MicroVulkan& ( ) const;
+
+	operator MicroVulkanRenderContext& ( );
 
 };
